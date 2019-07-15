@@ -8,7 +8,7 @@ import warnings
 warnings.formatwarning = lambda message, category, *args, **kwargs: \
     '%s: %s' % (category.__name__, message)
 
-ROOT_URLCONF = 'clog.urls'
+ROOT_URLCONF = 'cloud_log.urls'
 ROOT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 if ROOT_PATH not in sys.path:
@@ -57,8 +57,8 @@ TEMPLATES = [
     },
 ]
 
-# AUTHENTICATION_BACKENDS = ('clog.contrib.auth.backend.CMPBackend',)
-# AUTH_USER_MODEL = 'clog.User'
+# AUTHENTICATION_BACKENDS = ('cloud_log.contrib.auth.backend.CMPBackend',)
+# AUTH_USER_MODEL = 'cloud_log.User'
 
 SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
 SESSION_COOKIE_HTTPONLY = True
@@ -120,7 +120,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework_docs',
     't2cloud_rest',
-    'clog',
+    'cloud_log',
 )
 
 
@@ -128,10 +128,10 @@ MIDDLEWARE_CLASSES = (
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
-    # 'django.contrib.sessions.middleware.SessionMiddleware',
-    'clog.contrib.auth.middleware.SessionMiddleware',
-    # 'django.contrib.auth.middleware.AuthenticationMiddleware',
-    # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    'django.contrib.sessions.middleware.SessionMiddleware',
+    # 't2cloud_auth.middleware.SessionMiddleware',
+    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     't2cloud_rest.middleware.RestMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
@@ -153,8 +153,8 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         # 使DRF接口获得认证
-        'clog.contrib.auth.middleware.SessionAuthentication',
-        # 'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        # 'portal_identity.contrib.auth.middleware.SessionAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
         # 't2cloud_auth.permission.permissions.URLPermission',
@@ -164,7 +164,7 @@ REST_FRAMEWORK = {
 API_ROOT = 'api'
 T2CLOUD_REST = {
     'register_package': [
-        (API_ROOT, 'clog.rest', True),
+        (API_ROOT, 'cloud_log.rest', True),
     ],
     'except_csrf': False,
     'view_middleware_class': (
