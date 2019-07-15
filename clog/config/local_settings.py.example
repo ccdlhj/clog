@@ -1,0 +1,53 @@
+# -*- coding: utf-8 -*-
+# local setting
+PERMISSION_URLIGNORE = ['.']
+
+DEBUG = True
+VUE_DEBUG = True
+WEB_ROOT = '/'
+ALLOWED_HOSTS = ['*']
+
+
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": "redis://127.0.0.1:6379/1",
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#             # "PASSWORD": "aaaaaa"
+#         }
+#     }
+# }
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake'
+    }
+}
+
+# Portal数据库
+DATABASES = {
+    'default': {
+        # 'ATOMIC_REQUESTS': True,
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'cmp_portal',
+        'USER': 'root',
+        'PASSWORD': 'aaaaaa',
+        'HOST': '127.0.0.1',
+        'PORT': '3306'
+    },
+}
+
+
+
+CORS_ORIGIN_WHITELIST = (
+    'hostname.example.com',
+    'localhost:8089',
+    'localhost:8081',
+    'localhost:8082',
+    'localhost:8083',
+    'localhost:8080',
+    '127.0.0.1:9000'
+)
+
