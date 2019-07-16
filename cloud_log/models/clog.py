@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
-
+import jsonfield
 
 class ClogDBM(models.Model):
     '''日志表'''
@@ -17,10 +17,10 @@ class ClogDBM(models.Model):
     res_org_name = models.CharField(max_length=255, null=True, help_text='资源组织名称')
     res_org_id = models.CharField(max_length=32, null=True, help_text='资源组织ID')
     ip_address = models.CharField(max_length=64, null=True, help_text='IP地址')
-    created_at = models.DateTimeField(auto_now_add=True, help_text='创建时间')
+    created_at = models.DateTimeField(null=True, help_text='创建时间')
     updated_at = models.DateTimeField(null=True, help_text='更新时间')
-    origin_data = models.TextField(null=True, help_text='原始数据')
-    update_data = models.TextField(null=True, help_text='更新数据')
+    origin_data = jsonfield.JSONField(null=True, help_text='原始数据')
+    update_data = jsonfield.JSONField(null=True, help_text='更新数据')
     log_level = models.CharField(max_length=64, null=True, help_text='日志等级')
     extra = models.TextField(max_length=64, null=True, help_text='扩展')
 
