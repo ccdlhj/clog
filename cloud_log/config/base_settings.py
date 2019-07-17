@@ -168,7 +168,7 @@ T2CLOUD_REST = {
     ],
     'except_csrf': False,
     'view_middleware_class': (
-        't2cloud_portal.rest_handler.ClogMiddleware',
+        'cloud_log.contrib.auth.middleware.ClogAuthTokenMiddleware',
     ),
     'exception_handler_method': {
         # 't2cloud_portal.rest_handler.handle_nova_exception':
