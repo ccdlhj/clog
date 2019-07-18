@@ -31,3 +31,5 @@ MySQL-python==1.2.5
 portal-core>=100.1.0.dev,<100.2.0
 portal-rest>=100.1.0.dev,<100.2.0
 
+requests==2.12.4
+jsonfield==2.0.2
