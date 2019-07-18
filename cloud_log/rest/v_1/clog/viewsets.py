@@ -23,6 +23,12 @@ class ClogViewset(NoAuthViewSet,
         """创建日志"""
         return ClogDBM.objects.create(**data)
 
+    def perform_collect(self, data, ids=None, query_params=None):
+        search_data = copy.deepcopy(data)
+        params = service.build_clog_query(search_data)
+        clogs = ClogDBM.objects.filter(**params)
+        return clogs
+
     def perform_count(self, data, ids=None, query_params=None):
         """日志总数"""
         search_data = copy.deepcopy(data)
@@ -44,6 +50,19 @@ class ConditionListViewset(NoAuthViewSet,
                            ):
     schema_class = ClogSchema
     dump_schema_class = ClogSchema
+
+    def perform_collect(self, data, ids=None, query_params=None):
+        search_data = copy.deepcopy(data)
+        filters = {}
+        filter_keys_list = search_data.pop('filter_keys_list', [])
+        filter_value_list = search_data.pop('filter_values_list', [])
+        for i in range(len(filter_keys_list)):
+            filter_key = filter_keys_list[i] + "__in"
+            filters[filter_key] = filter_value_list[i]
+        params = service.build_clog_query(search_data)
+        params.update(filters)
+        clogs = ClogDBM.objects.filter(**params)
+        return clogs
 
     def perform_count(self, data, ids=None, query_params=None):
         """查询数目"""
@@ -73,8 +92,7 @@ class ConditionListViewset(NoAuthViewSet,
         params = service.build_clog_query(search_data)
         params.update(filters)
         clogs = ClogDBM.objects.filter(**params)
-        clogs = clogs[offset:offset + limit]
-        return clogs
+        return clogs[offset:offset + limit]
 
 
 @router(parent=ClogViewset)
