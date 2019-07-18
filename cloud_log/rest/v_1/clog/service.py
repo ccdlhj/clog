@@ -7,11 +7,11 @@ def set_date_start_and_end_filter(query_params):
     start = query_params.pop("start", None)
     end = query_params.pop("end", None)
     if start and end:
-        time_query_param['create_at__range'] = [start, end]
+        time_query_param['created_at__range'] = [start, end]
     elif start and not end:
-        time_query_param['create_at__gt'] = start
+        time_query_param['created_at__gt'] = start
     elif not start and end:
-        time_query_param['create_at__lt'] = end
+        time_query_param['created_at__lt'] = end
     return time_query_param
 
 
