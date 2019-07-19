@@ -22,7 +22,7 @@ class ClogClient(object):
 
     def list(self, data=None):
         url = self.base_url + 'api/' + self.version + '/clog/collect'
-        r = requests.post(url, data=data)
+        r = requests.post(url, json=data)
         clogs = []
         for i in r.json().get('data', []):
             clogs.append(ClogResouce(**i))
@@ -30,7 +30,7 @@ class ClogClient(object):
 
     def condition_list(self, data=None):
         url = self.base_url + 'api/' + self.version + '/clog/conditionList/collect'
-        r = requests.post(url, data=data)
+        r = requests.post(url, json=data)
         clogs = []
         for i in r.json().get('data', []):
             clogs.append(ClogResouce(**i))
@@ -38,7 +38,7 @@ class ClogClient(object):
 
     def create(self, data=None):
         url = self.base_url + 'api/' + self.version + '/clog/spawn'
-        r = requests.post(url, data=data)
+        r = requests.post(url, json=data)
         clog = ClogResouce(**r.json().get('data'))
         return clog
 
@@ -50,18 +50,8 @@ class ClogClient(object):
 
     def update(self, clog_id, data=None):
         url = self.base_url + 'api/' + self.version + '/clog/' + clog_id + '/modify'
-        r = requests.post(url, data=data)
+        r = requests.post(url, json=data)
         if r.status_code == 200:
             return True
         else:
             return False
-
-
-if __name__ == '__main__':
-    data = {
-        'res_org_id': 'abc',
-        'created_at': '2021-09-21 11:11:11'
-    }
-    client = ClogClient()
-    clog = client.update('1', data)
-    print clog
