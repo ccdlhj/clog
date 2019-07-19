@@ -2,6 +2,8 @@
 from t2cloud_rest.schema import PortalSchema, fields
 from django.utils.translation import ugettext_lazy as _
 
+import jsonfield
+
 
 class ClogSchema(PortalSchema):
     id = fields.Integer(dump_only=True, help_text=_("ID"))
@@ -18,8 +20,8 @@ class ClogSchema(PortalSchema):
     ip_address = fields.String(help_text=_("Ip Address"))
     created_at = fields.DateTime(help_text=_("Create Time"))
     updated_at = fields.DateTime(help_text=_("Update Time"))
-    origin_data = fields.TextArea(help_text=_("Origin Data"))
-    update_data = fields.TextArea(help_text=_("Update Data"))
+    origin_data = fields.Dict(help_text=_("Origin Data"))
+    update_data = fields.Dict(help_text=_("Update Data"))
     log_level = fields.String(help_text=_("Log Level"))
     start = fields.DateTime(help_text=_("Operate StartDate"))
     end = fields.DateTime(help_text=_("Operate EndDate"))
