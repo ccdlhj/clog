@@ -25,13 +25,20 @@ class ClogViewset(NoAuthViewSet,
 
     def perform_collect(self, data, ids=None, query_params=None):
         search_data = copy.deepcopy(data)
+        sort = search_data.pop("sort", [])
         params = service.build_clog_query(search_data)
-        clogs = ClogDBM.objects.filter(**params).order_by(*(data.get('sort',["-created_at"])))
+        clogs = ClogDBM.objects.filter(**params)
+        if sort:
+            clogs = clogs.order_by(*sort)
         return clogs
 
     def perform_count(self, data, ids=None, query_params=None):
         """日志总数"""
         search_data = copy.deepcopy(data)
+        try:
+            search_data.pop('sort')
+        except:
+            pass
         params = service.build_clog_query(search_data)
         clogs = ClogDBM.objects.filter(**params)
         return clogs.count()
@@ -39,8 +46,11 @@ class ClogViewset(NoAuthViewSet,
     def perform_paged_collect(self, data, ids=None, query_params=None, limit=None, offset=None):
         """分页查询"""
         search_data = copy.deepcopy(data)
+        sort = search_data.pop("sort", [])
         params = service.build_clog_query(search_data)
-        clogs = ClogDBM.objects.filter(**params).order_by(*(data.get('sort', ["-created_at"])))
+        clogs = ClogDBM.objects.filter(**params)
+        if sort:
+            clogs = clogs.order_by(*sort)
         return clogs[offset:offset + limit]
 
 
@@ -59,14 +69,21 @@ class ConditionListViewset(NoAuthViewSet,
         for i in range(len(filter_keys_list)):
             filter_key = filter_keys_list[i] + "__in"
             filters[filter_key] = filter_value_list[i]
+        sort = search_data.pop("sort", [])
         params = service.build_clog_query(search_data)
         params.update(filters)
-        clogs = ClogDBM.objects.filter(**params).order_by(*(data.get('sort',["-created_at"])))
+        clogs = ClogDBM.objects.filter(**params)
+        if sort:
+            clogs = clogs.order_by(*sort)
         return clogs
 
     def perform_count(self, data, ids=None, query_params=None):
         """查询数目"""
         search_data = copy.deepcopy(data)
+        try:
+            search_data.pop('sort')
+        except:
+            pass
         filters = {}
         filter_keys_list = search_data.pop('filter_keys_list', [])
         filter_value_list = search_data.pop('filter_values_list', [])
@@ -89,9 +106,12 @@ class ConditionListViewset(NoAuthViewSet,
         for i in range(len(filter_keys_list)):
             filter_key = filter_keys_list[i] + "__in"
             filters[filter_key] = filter_value_list[i]
+        sort = search_data.pop("sort", [])
         params = service.build_clog_query(search_data)
         params.update(filters)
-        clogs = ClogDBM.objects.filter(**params).order_by(data.get('sort', "-created_at"))
+        clogs = ClogDBM.objects.filter(**params)
+        if sort:
+            clogs = clogs.order_by(*sort)
         return clogs[offset:offset + limit]
 
 
