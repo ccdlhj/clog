@@ -2,8 +2,6 @@
 from t2cloud_rest.schema import PortalSchema, fields
 from django.utils.translation import ugettext_lazy as _
 
-import jsonfield
-
 
 class ClogSchema(PortalSchema):
     id = fields.Integer(dump_only=True, help_text=_("ID"))
@@ -28,3 +26,4 @@ class ClogSchema(PortalSchema):
     extra = fields.String(help_text=_("Extra"))
     filter_keys_list = fields.List(fields.String, help_text=_("Filter Keys List"))
     filter_values_list = fields.List(fields.List(fields.String), help_text=_("Filter Values List"))
+    sort = fields.List(help_text=_("Sort"))

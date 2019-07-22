@@ -26,7 +26,7 @@ class ClogViewset(NoAuthViewSet,
     def perform_collect(self, data, ids=None, query_params=None):
         search_data = copy.deepcopy(data)
         params = service.build_clog_query(search_data)
-        clogs = ClogDBM.objects.filter(**params)
+        clogs = ClogDBM.objects.filter(**params).order_by(*(data.get('sort',["-created_at"])))
         return clogs
 
     def perform_count(self, data, ids=None, query_params=None):
@@ -40,7 +40,7 @@ class ClogViewset(NoAuthViewSet,
         """分页查询"""
         search_data = copy.deepcopy(data)
         params = service.build_clog_query(search_data)
-        clogs = ClogDBM.objects.filter(**params)
+        clogs = ClogDBM.objects.filter(**params).order_by(*(data.get('sort', ["-created_at"])))
         return clogs[offset:offset + limit]
 
 
@@ -61,7 +61,7 @@ class ConditionListViewset(NoAuthViewSet,
             filters[filter_key] = filter_value_list[i]
         params = service.build_clog_query(search_data)
         params.update(filters)
-        clogs = ClogDBM.objects.filter(**params)
+        clogs = ClogDBM.objects.filter(**params).order_by(*(data.get('sort',["-created_at"])))
         return clogs
 
     def perform_count(self, data, ids=None, query_params=None):
@@ -75,8 +75,8 @@ class ConditionListViewset(NoAuthViewSet,
             filters[filter_key] = filter_value_list[i]
         params = service.build_clog_query(search_data)
         params.update(filters)
-        clogs_count = ClogDBM.objects.filter(**params).count()
-        return clogs_count
+        clogs_count = ClogDBM.objects.filter(**params)
+        return len(clogs_count)
 
     def perform_paged_collect(self, data, ids=None, query_params=None, limit=None, offset=None):
         """通过字段列表过滤
@@ -91,7 +91,7 @@ class ConditionListViewset(NoAuthViewSet,
             filters[filter_key] = filter_value_list[i]
         params = service.build_clog_query(search_data)
         params.update(filters)
-        clogs = ClogDBM.objects.filter(**params)
+        clogs = ClogDBM.objects.filter(**params).order_by(data.get('sort', "-created_at"))
         return clogs[offset:offset + limit]
 
 
