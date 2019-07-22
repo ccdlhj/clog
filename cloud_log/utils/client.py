@@ -32,23 +32,33 @@ class ClogClient(object):
         data = self.delete_null(data)
         url = self.base_url + 'api/' + self.version + '/clog/collect'
         r = requests.post(url, json=data)
-        clogs = []
-        for i in r.json().get('data', []):
-            clogs.append(ClogResouce(**i))
-        return clogs
+        clogs_api_data = r.json().get('data')
+        if isinstance(clogs_api_data, dict):
+            clogs = []
+            for i in clogs_api_data.get('result'):
+                clogs.append(ClogResouce(**i))
+            return clogs
+        else:
+            if clogs_api_data:
+                return len(clogs_api_data)
+            else:
+                return 0
 
     def condition_list(self, data=None):
         data = self.delete_null(data)
         url = self.base_url + 'api/' + self.version + '/clog/conditionList/collect'
         r = requests.post(url, json=data)
-        clogs = []
         clogs_api_data = r.json().get('data')
         if isinstance(clogs_api_data, dict):
+            clogs = []
             for i in clogs_api_data.get('result'):
                 clogs.append(ClogResouce(**i))
             return clogs
         else:
-            return len(clogs_api_data)
+            if clogs_api_data:
+                return len(clogs_api_data)
+            else:
+                return 0
 
     def create(self, data=None):
         data = self.delete_null(data)
