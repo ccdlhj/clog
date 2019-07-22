@@ -26,3 +26,4 @@ class ClogSchema(PortalSchema):
     extra = fields.String(help_text=_("Extra"))
     filter_keys_list = fields.List(fields.String, help_text=_("Filter Keys List"))
     filter_values_list = fields.List(fields.List(fields.String), help_text=_("Filter Values List"))
+    sort = fields.List(help_text=_("Sort"))
