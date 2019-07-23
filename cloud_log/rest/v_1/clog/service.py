@@ -21,6 +21,6 @@ def build_clog_query(query_params):
     params = {}
     # 参数模糊查询
     for query_param_key in query_params:
-        params[query_param_key+"__contains"] = query_params[query_param_key]
+        params[query_param_key+"__icontains"] = query_params[query_param_key]
     params.update(time_query_param)
     return params
