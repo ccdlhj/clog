@@ -39,10 +39,10 @@ class ClogClient(object):
                 clogs.append(ClogResouce(**i))
             return clogs
         else:
-            if clogs_api_data:
-                return len(clogs_api_data)
-            else:
-                return 0
+            clogs = []
+            for i in clogs_api_data:
+                clogs.append(ClogResouce(**i))
+            return clogs
 
     def condition_list(self, data=None):
         data = self.delete_null(data)
@@ -55,10 +55,10 @@ class ClogClient(object):
                 clogs.append(ClogResouce(**i))
             return clogs
         else:
-            if clogs_api_data:
-                return len(clogs_api_data)
-            else:
-                return 0
+            clogs = []
+            for i in clogs_api_data:
+                clogs.append(ClogResouce(**i))
+            return clogs
 
     def create(self, data=None):
         data = self.delete_null(data)
