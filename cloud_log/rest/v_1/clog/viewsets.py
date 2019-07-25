@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import copy
 
-from t2cloud_rest import NoAuthViewSet
+from t2cloud_rest import NoAuthViewSet, action
 from t2cloud_rest import router
 from t2cloud_rest import mixins
 from cloud_log.models import ClogDBM
@@ -23,35 +23,28 @@ class ClogViewset(NoAuthViewSet,
         """创建日志"""
         return ClogDBM.objects.create(**data)
 
-    def perform_collect(self, data, ids=None, query_params=None):
+    @action()
+    def get_list(self, data, ids=None, query_params=None):
         search_data = copy.deepcopy(data)
         sort = search_data.pop("sort", [])
+        paged = search_data.pop('Paged', False)
+        limit = search_data.pop('Limit', 0)
+        offset = search_data.pop('Offset', 0)
         params = service.build_clog_query(search_data)
         clogs = ClogDBM.objects.filter(**params)
         if sort:
             clogs = clogs.order_by(*sort)
+        if paged:
+            return clogs[offset:offset + limit]
         return clogs
 
-    def perform_count(self, data, ids=None, query_params=None):
+    @action()
+    def get_list_count(self, data, ids=None, query_params=None):
         """日志总数"""
         search_data = copy.deepcopy(data)
-        try:
-            search_data.pop('sort')
-        except:
-            pass
         params = service.build_clog_query(search_data)
-        clogs = ClogDBM.objects.filter(**params)
-        return clogs.count()
-
-    def perform_paged_collect(self, data, ids=None, query_params=None, limit=None, offset=None):
-        """分页查询"""
-        search_data = copy.deepcopy(data)
-        sort = search_data.pop("sort", [])
-        params = service.build_clog_query(search_data)
-        clogs = ClogDBM.objects.filter(**params)
-        if sort:
-            clogs = clogs.order_by(*sort)
-        return clogs[offset:offset + limit]
+        clogs_count = ClogDBM.objects.filter(**params).count()
+        return {'total': clogs_count}
 
 
 @router(prefix='conditionList')
@@ -61,7 +54,8 @@ class ConditionListViewset(NoAuthViewSet,
     schema_class = ClogSchema
     dump_schema_class = ClogSchema
 
-    def perform_collect(self, data, ids=None, query_params=None):
+    @action()
+    def get_list(self, data, ids=None, query_params=None):
         search_data = copy.deepcopy(data)
         filters = {}
         filter_keys_list = search_data.pop('filter_keys_list', [])
@@ -70,20 +64,22 @@ class ConditionListViewset(NoAuthViewSet,
             filter_key = filter_keys_list[i] + "__in"
             filters[filter_key] = filter_value_list[i]
         sort = search_data.pop("sort", [])
+        paged = search_data.pop('Paged', False)
+        limit = search_data.pop('Limit', 0)
+        offset = search_data.pop('Offset', 0)
         params = service.build_clog_query(search_data)
         params.update(filters)
         clogs = ClogDBM.objects.filter(**params)
         if sort:
             clogs = clogs.order_by(*sort)
-        return clogs
+        if paged:
+            return list(clogs[offset:offset + limit])
+        return list(clogs)
 
-    def perform_count(self, data, ids=None, query_params=None):
+    @action()
+    def get_list_count(self, data, ids=None, query_params=None):
         """查询数目"""
         search_data = copy.deepcopy(data)
-        try:
-            search_data.pop('sort')
-        except:
-            pass
         filters = {}
         filter_keys_list = search_data.pop('filter_keys_list', [])
         filter_value_list = search_data.pop('filter_values_list', [])
@@ -92,27 +88,8 @@ class ConditionListViewset(NoAuthViewSet,
             filters[filter_key] = filter_value_list[i]
         params = service.build_clog_query(search_data)
         params.update(filters)
-        clogs_count = ClogDBM.objects.filter(**params)
-        return len(clogs_count)
-
-    def perform_paged_collect(self, data, ids=None, query_params=None, limit=None, offset=None):
-        """通过字段列表过滤
-        format: {'filter_keys': ['res_org_id', 'user_id'], 'filter_values': [['1', '2', '3'],['4', '5', '6']]}
-        """
-        search_data = copy.deepcopy(data)
-        filters = {}
-        filter_keys_list = search_data.pop('filter_keys_list', [])
-        filter_value_list = search_data.pop('filter_values_list', [])
-        for i in range(len(filter_keys_list)):
-            filter_key = filter_keys_list[i] + "__in"
-            filters[filter_key] = filter_value_list[i]
-        sort = search_data.pop("sort", [])
-        params = service.build_clog_query(search_data)
-        params.update(filters)
-        clogs = ClogDBM.objects.filter(**params)
-        if sort:
-            clogs = clogs.order_by(*sort)
-        return clogs[offset:offset + limit]
+        clogs_count = ClogDBM.objects.filter(**params).count()
+        return {'total': clogs_count}
 
 
 @router(parent=ClogViewset)
@@ -134,6 +111,9 @@ class ClogSpcViewset(NoAuthViewSet,
 
     def perform_modify(self, data, ids=None, query_params=None):
         """修改"""
-        clog_id = ids['uuid']
-        ClogDBM.objects.filter(id=clog_id).update(**data)
-        return True
+        try:
+            clog_id = ids['uuid']
+            ClogDBM.objects.filter(id=clog_id).update(**data)
+            return True
+        except:
+            return False
