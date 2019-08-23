@@ -102,7 +102,7 @@ SITE_BRANDING = 'Portal'
 
 
 # cors config. https://github.com/ottoyiu/django-cors-headers
-CORS_ALLOW_HEADERS = ['X-Access-Module', 'X-Auth-Token', 'Content-Type', 'X-Auth-Trust', 'Prepay-API-Auth']
+CORS_ALLOW_HEADERS = ['X-Access-Module', 'X-Auth-Token', 'Content-Type', 'X-Auth-Trust', 'Prepay-API-Auth', 'Authorization']
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
@@ -127,18 +127,13 @@ INSTALLED_APPS = (
 MIDDLEWARE_CLASSES = (
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
-    # 'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    # 't2cloud_auth.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     't2cloud_rest.middleware.RestMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-    # 't2cloud_auth.middleware.PortalMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 't2cloud_auth.middleware.OpenstackClientsMiddleware',
 )
 
 
@@ -153,11 +148,10 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         # 使DRF接口获得认证
-        'rest_framework.authentication.SessionAuthentication',
-        # 'portal_identity.contrib.auth.middleware.SessionAuthentication',
+        't2cloud_rest.auth.middleware.TokenAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        # 't2cloud_auth.permission.permissions.URLPermission',
+        # 't2cloud_rest.auth.permissions.URLPermission',
     ),
 }
 
@@ -168,7 +162,7 @@ T2CLOUD_REST = {
     ],
     'except_csrf': False,
     'view_middleware_class': (
-        'cloud_log.contrib.auth.middleware.ClogAuthTokenMiddleware',
+        # 'cloud_log.contrib.auth.middleware.ClogAuthTokenMiddleware',
     ),
     'exception_handler_method': {
         # 't2cloud_portal.rest_handler.handle_nova_exception':
@@ -179,9 +173,5 @@ T2CLOUD_REST = {
     },
 }
 
-
-# permission cache keys
-PERMISSONS_CACHE_KEY = 'permissions'
-URL_PERMISSONS_CACHE_KEY = 'url_permissions'
 # 忽略所有GET请求。
 PERMISSION_URLIGNORE = ['^\[GET\]']

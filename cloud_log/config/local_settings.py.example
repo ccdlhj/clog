@@ -1,0 +1,61 @@
+# -*- coding: utf-8 -*-
+# local setting
+PERMISSION_URLIGNORE = ['.']
+
+DEBUG = True
+VUE_DEBUG = True
+WEB_ROOT = '/'
+ALLOWED_HOSTS = ['*']
+
+
+TOKEN_AUTH_CREDENTIAL = {
+    # 'AUTH_TOKEN': 'cc667b44c9c1a525714dd7bddc383787819795db',
+    'CREDENTIAL': {'username': 'admin', 'password': '!QAZ2wsx'},
+    'OBTAIN_TOKEN_URL': 'http://127.0.0.1:8000/api/v1.0.0/auth/login',
+    'VERIFY_TOKEN_URL': 'http://127.0.0.1:8000/api/v1.0.0/auth/token/verify_token',
+}
+
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": "redis://127.0.0.1:6379/1",
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient",
+#             # "PASSWORD": "aaaaaa"
+#         }
+#     }
+# }
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake'
+    }
+}
+
+# Portal数据库
+DATABASES = {
+    'default': {
+        # 'ATOMIC_REQUESTS': True,
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'clog',
+        'USER': 'root',
+        # 'PASSWORD': 'mysql',
+        # 'HOST': '127.0.0.1',
+        'PASSWORD': 'aaaaaa',
+        'HOST': '192.168.102.59',
+        'PORT': '3306'
+    },
+}
+
+
+
+CORS_ORIGIN_WHITELIST = (
+    'hostname.example.com',
+    'localhost:8089',
+    'localhost:8081',
+    'localhost:8082',
+    'localhost:8083',
+    'localhost:8080',
+    '127.0.0.1:9000'
+)

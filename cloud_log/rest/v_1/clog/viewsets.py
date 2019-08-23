@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import copy
 
-from t2cloud_rest import NoAuthViewSet, action
+from t2cloud_rest import BaseViewSet, action
 from t2cloud_rest import router
 from t2cloud_rest import mixins
 from cloud_log.models import ClogDBM
@@ -13,7 +13,7 @@ from cloud_log.rest.v_1.clog import service
 
 
 @router()
-class ClogViewset(NoAuthViewSet,
+class ClogViewset(BaseViewSet,
                   mixins.CollectResourceMixin,
                   mixins.SpawnResourceMixin, ):
     schema_class = ClogSchema
@@ -48,7 +48,7 @@ class ClogViewset(NoAuthViewSet,
 
 
 @router(prefix='conditionList')
-class ConditionListViewset(NoAuthViewSet,
+class ConditionListViewset(BaseViewSet,
                            mixins.CollectResourceMixin,
                            ):
     schema_class = ClogSchema
@@ -93,7 +93,7 @@ class ConditionListViewset(NoAuthViewSet,
 
 
 @router(parent=ClogViewset)
-class ClogSpcViewset(NoAuthViewSet,
+class ClogSpcViewset(BaseViewSet,
                      mixins.ShowResourceMixin,
                      mixins.ModifyResourceMixin
                      ):
