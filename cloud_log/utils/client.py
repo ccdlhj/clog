@@ -15,12 +15,12 @@ class ClogResouce(object):
 
 
 class ClogClient(object):
-    base_url = settings.CLOG_API_BASE_URL
     version = 'v1.0.0'
 
-    def __init__(self, version='v1.0.0', token=None):
+    def __init__(self, version='v1.0.0', token=None, url=None):
         self.version = version
         self.token = 'Token ' + token
+        self.base_url = url or settings.CLOG_API_BASE_URL
 
     def delete_null(self, data):
         params = dict()
