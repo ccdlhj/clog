@@ -31,7 +31,7 @@ class ClogClient(object):
 
     def list(self, data=None):
         data = self.delete_null(data)
-        url = self.base_url + 'api/' + self.version + '/clog/get_lst'
+        url = self.base_url + 'api/' + self.version + '/clog/get_list'
         r = requests.post(url, json=data, headers={'Authorization': self.token})
         clogs_api_data = r.json().get('data')
         clogs = []
