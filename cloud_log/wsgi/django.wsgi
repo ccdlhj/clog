@@ -6,7 +6,7 @@ from django.conf import settings
 
 # Add this file path to sys.path in order to import settings
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.realpath(__file__)), '../..'))
-os.environ['DJANGO_SETTINGS_MODULE'] = 'portal_cmp.settings'
+os.environ['DJANGO_SETTINGS_MODULE'] = 'cloud_log.settings'
 os.environ['DJANGO_ENVIRONMENT'] = 'prod'
 sys.stdout = sys.stderr
 
