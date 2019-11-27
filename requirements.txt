@@ -28,8 +28,8 @@ MySQL-python==1.2.5
 
 
 # portal
-portal-core>=100.1.0.dev,<100.2.0
-portal-rest>=100.1.0.dev,<100.2.0
+portal-core>=1.0.0.1
+portal-rest>=1.0.0.1
 
 requests==2.22.0
 jsonfield==2.0.2
