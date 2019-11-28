@@ -1,0 +1,21 @@
+stages:
+  - test
+  - pep8
+
+test_job:
+  stage: test
+  except:
+    - tags
+  script:
+    - tox
+  tags:
+    - cmp
+
+pep8_job:
+  stage: pep8
+  except:
+    - tags
+  script:
+    - tox -e pep8
+  tags:
+    - cmp
