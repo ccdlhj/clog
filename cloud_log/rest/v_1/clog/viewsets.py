@@ -174,9 +174,9 @@ class ClogViewset(BaseViewSet,
     def build_date_query(self, query, data):
         query_args = {}
         if data.get('date_start'):
-            query_args['created_at__gte'] = data.get('date_start')
+            query_args['created_at__gt'] = data.get('date_start')
         if data.get('date_end'):
-            query_args['updated_at__gte'] = data.get('date_end')
+            query_args['created_at__lte'] = data.get('date_end')
         if query_args:
             query &= Q(**query_args)
         return query
@@ -208,29 +208,6 @@ class ClogViewset(BaseViewSet,
     def perform_count(self, data, ids=None, query_params=None):
         clogs = self.clog_collect(data)
         return clogs.count()
-
-    @action()
-    def get_list(self, data, ids=None, query_params=None):
-        search_data = copy.deepcopy(data)
-        sort = search_data.pop("sort", [])
-        paged = search_data.pop('Paged', False)
-        limit = search_data.pop('Limit', 0)
-        offset = search_data.pop('Offset', 0)
-        params = service.build_clog_query(search_data)
-        clogs = Clog.objects.filter(**params)
-        if sort:
-            clogs = clogs.order_by(*sort)
-        if paged:
-            return clogs[offset:offset + limit]
-        return clogs
-
-    @action()
-    def get_list_count(self, data, ids=None, query_params=None):
-        """日志总数"""
-        search_data = copy.deepcopy(data)
-        params = service.build_clog_query(search_data)
-        clogs_count = Clog.objects.filter(**params).count()
-        return {'total': clogs_count}
 
 
 @router(parent=ClogViewset)
