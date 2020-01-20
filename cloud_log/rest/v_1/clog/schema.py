@@ -7,6 +7,18 @@ from cloud_log.utils.validate import validate_clog_status
 from cloud_log.utils.validate import validate_request_id
 
 
+class FiltersSchema(PortalSchema):
+    Name = fields.String(load_only=True, help_text=_("Name"))
+    Values = fields.List(fields.String, load_only=True, help_text=_("Values"))
+
+
+class SortFiltersSchema(PortalSchema):
+    """包含排序与过滤条件"""
+    Sorting = fields.Dict(load_only=True, help_text=_("Sorting"))
+    Filters = fields.Nested(FiltersSchema, many=True, load_only=True,
+                            help_text=_("Filters"))
+
+
 class ClogSchema(PortalSchema):
     request_id = fields.String(validate=validate_request_id,
                                help_text=_("Request ID"))
@@ -42,12 +54,10 @@ class ClogUpdateSchema(ClogSchema):
                        help_text=_('Clog UUID'))
 
 
-class ClogListSchema(PortalSchema):
-    date_start = fields.DateTime(load_only=True,
-                                 help_text=_("Operate StartDate"))
-    date_end = fields.DateTime(load_only=True, help_text=_("Operate EndDate"))
-    Filters = fields.Dict(allow_none=True, help_text=_("Filters"))
-    Sorting = fields.List(fields.Dict, load_only=True, help_text=_("Sorting"))
+class ClogListSchema(SortFiltersSchema):
+    startTime = fields.DateTime(load_only=True,
+                                help_text=_("Operate StartDate"))
+    endTime = fields.DateTime(load_only=True, help_text=_("Operate EndDate"))
     Paged = fields.Bool(load_only=True, help_text=_("Paged"))
     Limit = fields.Integer(load_only=True, help_text=_("Limit"))
     Offset = fields.Integer(load_only=True, help_text=_("Offset"))
