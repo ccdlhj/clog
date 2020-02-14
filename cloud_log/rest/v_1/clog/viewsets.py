@@ -106,11 +106,17 @@ class ClogViewset(BaseViewSet,
     schema_class = ClogListSchema
     dump_schema_class = ClogDumSchema
 
-    def validate_operations(self, operations):
-        if not isinstance(operations, list):
+    def validate_filter_values(self, values):
+        if not isinstance(values, list):
             msg = _('Invalid Filter operations {operations}').format(
-                operations=str(operations))
+                operations=str(values))
             raise ValidationError(msg)
+
+    def validate_filter_key(self, filter_key):
+        for k in clog_filter_keys:
+            if filter_key.startswith(k):
+                return True
+        return False
 
     def parse_values(self, operation, value_type):
         if operation and operation.get('values'):
@@ -131,52 +137,47 @@ class ClogViewset(BaseViewSet,
         return query
 
     def build_filter_query(self, query, filters):
-        # filters: {'user_id': [{'operator': 'in', 'values': [123]}]}
+        # filters: [
+        #               {"Names": "name__in", "Values": ["1", "2", "3"]},
+        #               {"Names": "name__contains", "Values": ["a", "b", "c"]}
+        #           ]
         if not filters:
             return query
 
-        query_args = {}
-        for k, operations in filters.items():
-            if not operations:
+        for i in filters:
+            query_filter = Q()
+            k = i.get('Name')
+            values = i.get('Values')
+            if not k or not values:
                 continue
-            self.validate_operations(operations)
-            if k not in clog_filter_keys:
+            self.validate_filter_values(values)
+            if not isinstance(k, (str, unicode)) or not self.validate_filter_key(k):
                 continue
 
-            for operation in operations:
-                operator = operation.get('operator')
-                if 'in' == operator:
-                    query_args[k+'__in'] = self.parse_values(operation, list)
-                elif 'contains' == operator:
-                    query_args[k+'__contains'] = \
-                        self.parse_values(operation, (str, unicode,))
-                elif 'icontains' == operator:
-                    query_args[k+'__icontains'] = \
-                        self.parse_values(operation, (str, unicode,))
+            for value in values:
+                query_filter |= Q(**{k: value})
 
-        if query_args:
-            query &= Q(**query_args)
+            query &= query_filter
         return query
 
     def build_order_by(self, sorting):
         order_bys = []
-        if not sorting:
-            return order_bys
-        for s in sorting:
-            key = s['key']
-            if key not in clog_filter_keys:
-                continue
-            order = s['order']
-            oder_by = key if order == 'asc' else '-' + key
+        if sorting:
+            key = sorting['key']
+            order = sorting['order']
+            if order == 'asc':
+                oder_by = key
+            else:
+                oder_by = '-' + key
             order_bys.append(oder_by)
         return order_bys
 
     def build_date_query(self, query, data):
         query_args = {}
-        if data.get('date_start'):
-            query_args['created_at__gt'] = data.get('date_start')
-        if data.get('date_end'):
-            query_args['created_at__lte'] = data.get('date_end')
+        if data.get('startTime'):
+            query_args['created_at__gt'] = data.get('startTime')
+        if data.get('endTime'):
+            query_args['created_at__lte'] = data.get('endTime')
         if query_args:
             query &= Q(**query_args)
         return query
