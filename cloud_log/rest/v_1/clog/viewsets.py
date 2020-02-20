@@ -10,6 +10,7 @@ from t2cloud_rest import action
 from t2cloud_rest import router
 from t2cloud_rest import mixins
 from t2cloud_rest import BaseViewSet
+from t2cloud_rest import ServiceBaseViewSet
 from t2cloud_rest.exceptions import ValidationError
 
 from cloud_log.models import Clog
@@ -84,7 +85,7 @@ def get_clog(clog_uuid):
 
 
 @router()
-class ClogViewset(BaseViewSet,
+class ClogViewset(ServiceBaseViewSet,
                   mixins.SpawnResourceMixin, ):
     schema_class = ClogSpawnSchema
     dump_schema_class = ClogSpawnSchema
@@ -101,7 +102,7 @@ class ClogViewset(BaseViewSet,
 
 
 @router()
-class ClogViewset(BaseViewSet,
+class ClogViewset(ServiceBaseViewSet,
                   mixins.CollectResourceMixin):
     schema_class = ClogListSchema
     dump_schema_class = ClogDumSchema
@@ -212,7 +213,7 @@ class ClogViewset(BaseViewSet,
 
 
 @router(parent=ClogViewset)
-class ClogSpcViewset(BaseViewSet,
+class ClogSpcViewset(ServiceBaseViewSet,
                      mixins.ShowResourceMixin,
                      mixins.ModifyResourceMixin):
     modify_schema_class = ClogUpdateSchema
