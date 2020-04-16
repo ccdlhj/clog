@@ -171,6 +171,8 @@ class ClogViewset(ServiceBaseViewSet,
             else:
                 oder_by = '-' + key
             order_bys.append(oder_by)
+        else:
+            order_bys = ['-created_by']
         return order_bys
 
     def build_date_query(self, query, data):
