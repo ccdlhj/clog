@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-04 18:07+0800\n"
+"POT-Creation-Date: 2020-04-29 12:50+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,3 +16,181 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+
+#: cloud_log/contrib/auth/middleware.py:37
+msgid "Invalid token header. No credentials provided."
+msgstr ""
+
+#: cloud_log/contrib/auth/middleware.py:40
+msgid "Invalid token header. Token string should not contain spaces."
+msgstr ""
+
+#: cloud_log/contrib/auth/middleware.py:46
+msgid ""
+"Invalid token header. Token string should not contain invalid characters."
+msgstr ""
+
+#: cloud_log/contrib/auth/middleware.py:75
+#: cloud_log/contrib/auth/middleware.py:97
+msgid "Invalid token."
+msgstr ""
+
+#: cloud_log/exceptions.py:38
+#, python-brace-format
+msgid "Internal Server Error {message}"
+msgstr "未知错误 {message}"
+
+#: cloud_log/rest/v_1/clog/schema.py:11
+msgid "Name"
+msgstr "名称"
+
+#: cloud_log/rest/v_1/clog/schema.py:12
+msgid "Values"
+msgstr "值"
+
+#: cloud_log/rest/v_1/clog/schema.py:17
+msgid "Sorting"
+msgstr "排序参数"
+
+#: cloud_log/rest/v_1/clog/schema.py:19
+msgid "Filters"
+msgstr "过滤参数"
+
+#: cloud_log/rest/v_1/clog/schema.py:24
+msgid "Request ID"
+msgstr "请求ID"
+
+#: cloud_log/rest/v_1/clog/schema.py:25
+msgid "Object UUID"
+msgstr "对象ID"
+
+#: cloud_log/rest/v_1/clog/schema.py:26
+msgid "Object Name"
+msgstr "对象名称"
+
+#: cloud_log/rest/v_1/clog/schema.py:27
+msgid "Object Type"
+msgstr "对象类型"
+
+#: cloud_log/rest/v_1/clog/schema.py:28
+msgid "Res Org ID"
+msgstr "资源组织ID"
+
+#: cloud_log/rest/v_1/clog/schema.py:29
+msgid "Res Org Name"
+msgstr "资源组织名称"
+
+#: cloud_log/rest/v_1/clog/schema.py:31
+msgid "Res Org ID Path"
+msgstr "资源组织ID路径"
+
+#: cloud_log/rest/v_1/clog/schema.py:32
+msgid "Res Org Name Path"
+msgstr "资源组织名称路径"
+
+#: cloud_log/rest/v_1/clog/schema.py:33
+msgid "User ID"
+msgstr "用户ID"
+
+#: cloud_log/rest/v_1/clog/schema.py:34
+msgid "User Name"
+msgstr "用户名称"
+
+#: cloud_log/rest/v_1/clog/schema.py:35
+msgid "Ip Address"
+msgstr "IP地址"
+
+#: cloud_log/rest/v_1/clog/schema.py:36
+msgid "Operation ID"
+msgstr "任务ID"
+
+#: cloud_log/rest/v_1/clog/schema.py:37
+msgid "Operation Name"
+msgstr "任务名称"
+
+#: cloud_log/rest/v_1/clog/schema.py:39
+msgid "Clog Status"
+msgstr "日志状态"
+
+#: cloud_log/rest/v_1/clog/schema.py:40
+msgid "Create Time"
+msgstr "创建时间"
+
+#: cloud_log/rest/v_1/clog/schema.py:41
+msgid "Update Time"
+msgstr "更新时间"
+
+#: cloud_log/rest/v_1/clog/schema.py:42
+msgid "Origin Data"
+msgstr "原始数据"
+
+#: cloud_log/rest/v_1/clog/schema.py:43
+msgid "Expected Data"
+msgstr "期望数据"
+
+#: cloud_log/rest/v_1/clog/schema.py:44
+msgid "Result Data"
+msgstr "结果数据"
+
+#: cloud_log/rest/v_1/clog/schema.py:45
+msgid "Extra"
+msgstr "其他数据"
+
+#: cloud_log/rest/v_1/clog/schema.py:49 cloud_log/rest/v_1/clog/schema.py:54
+#: cloud_log/rest/v_1/clog/schema.py:67
+msgid "Clog UUID"
+msgstr "日志ID"
+
+#: cloud_log/rest/v_1/clog/schema.py:59
+msgid "Operate StartDate"
+msgstr "任务搜索的起始时间"
+
+#: cloud_log/rest/v_1/clog/schema.py:60
+msgid "Operate EndDate"
+msgstr "任务搜索的截止时间"
+
+#: cloud_log/rest/v_1/clog/schema.py:61
+msgid "Paged"
+msgstr "是否分页"
+
+#: cloud_log/rest/v_1/clog/schema.py:62
+msgid "Limit"
+msgstr "数据量"
+
+#: cloud_log/rest/v_1/clog/schema.py:63
+msgid "Offset"
+msgstr "偏移量"
+
+#: cloud_log/rest/v_1/clog/viewsets.py:83
+#, python-brace-format
+msgid "Clog {uuid} could not be found."
+msgstr "未找到日志{uuid}"
+
+#: cloud_log/rest/v_1/clog/viewsets.py:100
+#: cloud_log/rest/v_1/clog/viewsets.py:241
+#, python-brace-format
+msgid "DB operation failed {message}"
+msgstr "数据库操作失败{message}"
+
+#: cloud_log/rest/v_1/clog/viewsets.py:112
+#, python-brace-format
+msgid "Invalid Filter operations {operations}"
+msgstr "无效的过滤参数{operations}"
+
+#: cloud_log/rest/v_1/clog/viewsets.py:127
+#, python-brace-format
+msgid "Invalid values {values}, required type is {value_type}"
+msgstr "无效的参数值{values}，该参数类型应该为{value_type}"
+
+#: cloud_log/utils/common.py:60
+msgid "Invalid request user res_org_tree"
+msgstr "无效的请求参数 res_org_tree"
+
+#: cloud_log/utils/validate.py:19
+msgid "Invalid request_id"
+msgstr "无效的请求ID"
+
+#: cloud_log/utils/validate.py:24
+#, python-brace-format
+msgid "Invalid clog status {status}"
+msgstr "无效的日志状态{status}"
