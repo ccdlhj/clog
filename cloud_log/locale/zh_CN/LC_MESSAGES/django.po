@@ -36,7 +36,6 @@ msgid "Invalid token."
 msgstr ""
 
 #: cloud_log/exceptions.py:38
-#, python-brace-format
 msgid "Internal Server Error {message}"
 msgstr "未知错误 {message}"
 
@@ -162,23 +161,19 @@ msgid "Offset"
 msgstr "偏移量"
 
 #: cloud_log/rest/v_1/clog/viewsets.py:83
-#, python-brace-format
 msgid "Clog {uuid} could not be found."
 msgstr "未找到日志{uuid}"
 
 #: cloud_log/rest/v_1/clog/viewsets.py:100
 #: cloud_log/rest/v_1/clog/viewsets.py:241
-#, python-brace-format
 msgid "DB operation failed {message}"
 msgstr "数据库操作失败{message}"
 
 #: cloud_log/rest/v_1/clog/viewsets.py:112
-#, python-brace-format
 msgid "Invalid Filter operations {operations}"
 msgstr "无效的过滤参数{operations}"
 
 #: cloud_log/rest/v_1/clog/viewsets.py:127
-#, python-brace-format
 msgid "Invalid values {values}, required type is {value_type}"
 msgstr "无效的参数值{values}，该参数类型应该为{value_type}"
 
@@ -191,6 +186,5 @@ msgid "Invalid request_id"
 msgstr "无效的请求ID"
 
 #: cloud_log/utils/validate.py:24
-#, python-brace-format
 msgid "Invalid clog status {status}"
 msgstr "无效的日志状态{status}"
