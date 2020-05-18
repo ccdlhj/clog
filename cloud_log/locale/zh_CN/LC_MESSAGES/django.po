@@ -11,7 +11,7 @@ msgstr ""
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -73,19 +73,19 @@ msgstr "对象类型"
 
 #: cloud_log/rest/v_1/clog/schema.py:28
 msgid "Res Org ID"
-msgstr "资源组织ID"
+msgstr "项目ID"
 
 #: cloud_log/rest/v_1/clog/schema.py:29
 msgid "Res Org Name"
-msgstr "资源组织名称"
+msgstr "项目名称"
 
 #: cloud_log/rest/v_1/clog/schema.py:31
 msgid "Res Org ID Path"
-msgstr "资源组织ID路径"
+msgstr "项目ID路径"
 
 #: cloud_log/rest/v_1/clog/schema.py:32
 msgid "Res Org Name Path"
-msgstr "资源组织名称路径"
+msgstr "项目"
 
 #: cloud_log/rest/v_1/clog/schema.py:33
 msgid "User ID"
