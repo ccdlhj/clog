@@ -188,3 +188,9 @@ msgstr "无效的请求ID"
 #: cloud_log/utils/validate.py:24
 msgid "Invalid clog status {status}"
 msgstr "无效的日志状态{status}"
+
+msgid "Sync Type"
+msgstr "同步类型"
+
+msgid "Cloud Env ID"
+msgstr "资源域ID"

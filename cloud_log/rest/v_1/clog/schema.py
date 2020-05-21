@@ -34,7 +34,7 @@ class ClogSchema(PortalSchema):
     user_name = fields.String(max_len=64, help_text=_("User Name"))
     ip_address = fields.IPAddress(allow_none=True, help_text=_("Ip Address"))
     operation_id = fields.Integer(help_text=_("Operation ID"))
-    operation_name = fields.String(help_text=_("Operation Name"))
+    operation_name = fields.String(max_len=255, help_text=_("Operation Name"))
     status = fields.String(validate=validate_clog_status,
                            help_text=_("Clog Status"))
     created_at = fields.DateTime(allow_none=True, help_text=_("Create Time"))
@@ -43,6 +43,8 @@ class ClogSchema(PortalSchema):
     expected_data = fields.Dict(allow_none=True, help_text=_("Expected Data"))
     result_data = fields.Dict(allow_none=True, help_text=_("Result Data"))
     extra = fields.Dict(allow_none=True, help_text=_("Extra"))
+    sync_type = fields.String(max_len=255, help_text=_("Sync Type"))
+    cloud_env_id = fields.UUID(help_text=_("Cloud Env ID"))
 
 
 class ClogSpawnSchema(ClogSchema):
@@ -58,6 +60,7 @@ class ClogListSchema(SortFiltersSchema):
     startTime = fields.DateTime(load_only=True,
                                 help_text=_("Operate StartDate"))
     endTime = fields.DateTime(load_only=True, help_text=_("Operate EndDate"))
+    cloud_env_id = fields.UUID(help_text=_("Cloud Env ID"))
     Paged = fields.Bool(load_only=True, help_text=_("Paged"))
     Limit = fields.Integer(load_only=True, help_text=_("Limit"))
     Offset = fields.Integer(load_only=True, help_text=_("Offset"))

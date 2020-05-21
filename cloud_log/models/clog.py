@@ -45,6 +45,9 @@ class Clog(models.Model):
     expected_data = JSONField(null=True, help_text='预期数据')
     result_data = JSONField(null=True, help_text='结果数据')
     extra = JSONField(max_length=1024, null=True, help_text='日志扩展数据json')
+    sync_type = models.CharField(max_length=255, null=True, help_text='同步类型')
+    cloud_env_id = models.CharField(max_length=36, db_column='cloud_env_id',
+                                    db_index=True, null=True, help_text="资源域ID")
 
     class Meta:
         db_table = 'clog'

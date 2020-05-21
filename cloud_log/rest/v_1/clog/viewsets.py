@@ -45,6 +45,7 @@ clog_filter_keys = [
     'expected_data',
     'result_data',
     'extra',
+    'cloud_env_id',
 ]
 
 clog_keys = ['uuid'] + clog_filter_keys
@@ -72,6 +73,7 @@ def parse_clog_data(data):
         'expected_data': data.get('expected_data'),
         'result_data': data.get('result_data'),
         'extra': data.get('extra'),
+        'sync_type': data.get('sync_type'),
     }
     return clog
 
@@ -197,6 +199,9 @@ class ClogViewset(ServiceBaseViewSet,
         order_by = self.build_order_by(data.get('Sorting'))
         if order_by:
             clogs = clogs.order_by(*order_by)
+        if limit:
+            offset = offset or 0
+            clogs[offset:offset+limit]
         return clogs
 
     def perform_collect(self, data, ids=None, query_params=None):
@@ -206,7 +211,6 @@ class ClogViewset(ServiceBaseViewSet,
     def perform_paged_collect(self, data, ids=None, query_params=None,
                               limit=None, offset=None):
         clogs = self.clog_collect(data, limit=limit, offset=offset)
-        clogs = clogs[offset:offset+limit]
         return clogs
 
     def perform_count(self, data, ids=None, query_params=None):

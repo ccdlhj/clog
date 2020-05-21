@@ -102,7 +102,7 @@ SITE_BRANDING = 'Portal'
 
 
 # cors config. https://github.com/ottoyiu/django-cors-headers
-CORS_ALLOW_HEADERS = ['X-Access-Module', 'X-Auth-Token', 'Content-Type', 'X-Auth-Trust', 'Prepay-API-Auth', 'Authorization']
+CORS_ALLOW_HEADERS = ['X-Access-Module', 'X-Auth-Token', 'Content-Type', 'X-Auth-Trust', 'Prepay-API-Auth', 'Authorization', 'CMP-Current-Cloud-Env']
 CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_CREDENTIALS = True
 
