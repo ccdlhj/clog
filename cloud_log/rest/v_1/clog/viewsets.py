@@ -74,6 +74,7 @@ def parse_clog_data(data):
         'result_data': data.get('result_data'),
         'extra': data.get('extra'),
         'sync_type': data.get('sync_type'),
+        'cloud_env_id': data.get('cloud_env_id'),
     }
     return clog
 
@@ -201,7 +202,7 @@ class ClogViewset(ServiceBaseViewSet,
             clogs = clogs.order_by(*order_by)
         if limit:
             offset = offset or 0
-            clogs[offset:offset+limit]
+            clogs = clogs[offset:offset+limit]
         return clogs
 
     def perform_collect(self, data, ids=None, query_params=None):
