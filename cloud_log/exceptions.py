@@ -11,7 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from django.utils.translation import ugettext_lazy as _
-from t2cloud.utils import enum
+from portal_core.utils import enum
 from rest_framework.exceptions import APIException
 
 CODE = enum(

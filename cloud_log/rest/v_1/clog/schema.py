@@ -2,7 +2,7 @@
 
 from django.utils.translation import ugettext_lazy as _
 
-from t2cloud_rest.schema import PortalSchema, fields
+from portal_rest.schema import PortalSchema, fields
 from cloud_log.utils.validate import validate_clog_status
 from cloud_log.utils.validate import validate_request_id
 

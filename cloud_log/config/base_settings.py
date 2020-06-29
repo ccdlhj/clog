@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""T2cloud settings and globals."""
+"""Clog settings and globals."""
 
 import sys
 import os
@@ -119,7 +119,7 @@ INSTALLED_APPS = (
     'corsheaders',
     'rest_framework',
     'rest_framework_docs',
-    't2cloud_rest',
+    'portal_rest',
     'cloud_log',
 )
 
@@ -130,7 +130,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-    't2cloud_rest.middleware.RestMiddleware',
+    'portal_rest.middleware.RestMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.locale.LocaleMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -148,10 +148,10 @@ REST_FRAMEWORK = {
     ),
     'DEFAULT_AUTHENTICATION_CLASSES': (
         # 使DRF接口获得认证
-        't2cloud_rest.auth.middleware.TokenAuthentication',
+        'portal_rest.auth.middleware.TokenAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (
-        # 't2cloud_rest.auth.permissions.URLPermission',
+        # 'portal_rest.auth.permissions.URLPermission',
     ),
 }
 
@@ -165,7 +165,7 @@ T2CLOUD_REST = {
         # 'cloud_log.contrib.auth.middleware.ClogAuthTokenMiddleware',
     ),
     'exception_handler_method': {
-        # 't2cloud_portal.rest_handler.handle_nova_exception':
+        # 'portal_kvm.rest_handler.handle_nova_exception':
         #     (
         #         'novaclient.exceptions.UnsupportedVersion',
         #         'novaclient.exceptions.CommandError',

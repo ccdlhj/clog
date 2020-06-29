@@ -3,7 +3,7 @@ import re
 
 from django.utils.translation import ugettext_lazy as _
 
-from t2cloud_rest.exceptions import ValidationError
+from portal_rest.exceptions import ValidationError
 from cloud_log.utils.common import CLOG_STATUS
 
 
