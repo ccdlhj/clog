@@ -4,7 +4,7 @@ import copy
 
 from django.utils.translation import ugettext_lazy as _
 
-from t2cloud.utils import enum
+from portal_core.utils import enum
 from cloud_log.exceptions import InternalServerError
 
 # 组织资源几种类型

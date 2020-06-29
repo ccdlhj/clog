@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-URL patterns for the T2cloud Portal.
+URL patterns for the Clog Portal.
 """
 
 from django.conf import settings
@@ -8,7 +8,7 @@ from django.conf.urls import patterns
 from django.conf.urls import url
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns  # noqa
 
-from t2cloud_rest import PortalDocsView, PortalRouter
+from portal_rest import PortalDocsView, PortalRouter
 
 # 注册路由
 PortalRouter.auto_register_package()

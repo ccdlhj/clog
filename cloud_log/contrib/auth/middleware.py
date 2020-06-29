@@ -10,7 +10,7 @@ from rest_framework import exceptions
 from rest_framework.authentication import TokenAuthentication as BaseTokenAuthentication
 from rest_framework.authentication import get_authorization_header
 
-from t2cloud.utils import ResourceWrapper
+from portal_core.utils import ResourceWrapper
 
 LOG = logging.getLogger(__name__)
 

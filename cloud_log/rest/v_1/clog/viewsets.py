@@ -6,12 +6,12 @@ from django.utils.translation import ugettext_lazy as _
 
 from oslo_utils.uuidutils import generate_uuid
 
-from t2cloud_rest import action
-from t2cloud_rest import router
-from t2cloud_rest import mixins
-from t2cloud_rest import BaseViewSet
-from t2cloud_rest import ServiceBaseViewSet
-from t2cloud_rest.exceptions import ValidationError
+from portal_rest import action
+from portal_rest import router
+from portal_rest import mixins
+from portal_rest import BaseViewSet
+from portal_rest import ServiceBaseViewSet
+from portal_rest.exceptions import ValidationError
 
 from cloud_log.models import Clog
 from cloud_log.rest.v_1.clog.schema import ClogListSchema
