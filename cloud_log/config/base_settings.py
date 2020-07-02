@@ -156,7 +156,7 @@ REST_FRAMEWORK = {
 }
 
 API_ROOT = 'api'
-T2CLOUD_REST = {
+PORTAL_REST = {
     'register_package': [
         (API_ROOT, 'cloud_log.rest', True),
     ],
