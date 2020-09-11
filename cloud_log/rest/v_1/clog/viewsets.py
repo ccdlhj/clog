@@ -22,7 +22,7 @@ from cloud_log.rest.v_1.clog import service
 from cloud_log.utils.common import RES_ORG_TYPE
 from cloud_log.utils.common import CLOG_STATUS_RUNNING
 from cloud_log.utils.common import get_res_org_uuid_list
-
+from cloud_log.utils.constants import SYS_CLOG_OPERATION_IDS
 
 clog_filter_keys = [
     'request_id',
@@ -138,6 +138,7 @@ class ClogViewset(ServiceBaseViewSet,
         res_org_uuids = res_org_uuids or get_res_org_uuid_list(self.request,
                                                                current=True)
         query &= Q(res_org_id__in=res_org_uuids)
+        query &= ~Q(operation_id__in=SYS_CLOG_OPERATION_IDS)
         return query
 
     def build_filter_query(self, query, filters):
