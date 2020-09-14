@@ -23,7 +23,7 @@ class ClogSchema(PortalSchema):
     request_id = fields.String(validate=validate_request_id,
                                help_text=_("Request ID"))
     object_uuid = fields.String(help_text=_("Object UUID"))
-    object_name = fields.String(max_len=64, help_text=_("Object Name"))
+    object_name = fields.String(max_len=255, help_text=_("Object Name"))
     object_type = fields.String(help_text=_("Object Type"))
     res_org_id = fields.UUID(help_text=_("Res Org ID"))
     res_org_name = fields.String(max_len=64, help_text=_("Res Org Name"))
