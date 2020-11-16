@@ -68,3 +68,9 @@ class ClogListSchema(SortFiltersSchema):
 
 class ClogDumSchema(ClogSchema):
     uuid = fields.UUID(dump_only=True, help_text=_('Clog UUID'))
+
+
+class GenerateExportClogTaskSchema(PortalSchema):
+    startTime = fields.String(help_text=_("Start Time"))
+    endTime = fields.String(help_text=_("End Time"))
+    export_clog_flag = fields.String(help_text=_("Export Clog Flag"))

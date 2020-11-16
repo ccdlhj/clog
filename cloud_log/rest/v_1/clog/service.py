@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import datetime
+from uuid import UUID, uuid1
 
 
 def set_date_start_and_end_filter(query_params):
@@ -24,3 +26,12 @@ def build_clog_query(query_params):
         params[query_param_key+"__icontains"] = query_params[query_param_key]
     params.update(time_query_param)
     return params
+
+
+def get_uuid_create_time(uuid):
+    u1 = UUID('{%s}' % uuid)
+    try:
+        create_time = datetime.datetime.fromtimestamp((u1.time -0x01b21dd213814000L) * 100 / 1e9)
+        return create_time
+    except Exception as e:
+        return None
