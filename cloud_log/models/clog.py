@@ -50,4 +50,4 @@ class Clog(models.Model):
                                     db_index=True, null=True, help_text="资源域ID")
 
     class Meta:
-        db_table = 'clog'
+        abstract = True
