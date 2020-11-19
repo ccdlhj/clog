@@ -23,7 +23,8 @@ from cloud_log.rest.v_1.clog.schema import ClogDumSchema
 from cloud_log.utils.common import RES_ORG_TYPE
 from cloud_log.utils.common import CLOG_STATUS_RUNNING
 from cloud_log.utils.common import get_res_org_uuid_list
-from cloud_log.utils.constants import SYS_CLOG_OPERATION_IDS, CLOG_SAVE_UPPER_MONTH
+from cloud_log.utils.constants import SYS_CLOG_OPERATION_IDS, CLOG_SAVE_UPPER_MONTH, MONTH_DECREASE_PROGRESSIVELY, \
+    DEFAULT_FIRST_MONTH, DEFAULT_LAST_MONTH, YEAR_DECREASE_PROGRESSIVELY
 from cloud_log.utils.create_model import get_model, generate_clog_table_name
 
 clog_filter_keys = [
@@ -93,17 +94,19 @@ def validate_clog_in_all_tables(clog_uuid):
     now_date, year, month = get_now_date()
     clog_save_upper_month = CLOG_SAVE_UPPER_MONTH
     for i in range(clog_save_upper_month - 1):
-        if month == 1:
-            year -= 1
-            month = 12
-        else:
-            month -= 1
+        if i != 0:
+            if month == DEFAULT_FIRST_MONTH:
+                year -= YEAR_DECREASE_PROGRESSIVELY
+                month = DEFAULT_LAST_MONTH
+            else:
+                month -= MONTH_DECREASE_PROGRESSIVELY
         clog_table_name = generate_clog_table_name(datetime.datetime(year, month, 1))
         try:
             clog = get_model(clog_table_name, Clog).objects.get(uuid=clog_uuid)
             return clog
         except Exception as e:
             continue
+
     return None
 
 
@@ -120,6 +123,7 @@ def get_clog(clog_uuid, create_time):
         if not clog:
             msg = _('Clog {uuid} could not be found.').format(uuid=clog_uuid)
             raise ValidationError(msg)
+        return clog
 
 
 @router()

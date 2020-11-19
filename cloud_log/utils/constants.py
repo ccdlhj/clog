@@ -47,3 +47,18 @@ CLOG_ACTIONS = enum(
 
 HEADERS = {'Content-Type': 'application/json'}
 
+# 平台侧clog行为id
+SYS_CLOG_OPERATION_IDS = [700, 701, 702, 703]
+
+# 选择uuid版本
+UUID_DEFAULT_VERSION = getattr(settings, 'UUID_DEFAULT_VERSION', 1)
+
+# 递减月数
+MONTH_DECREASE_PROGRESSIVELY = getattr(settings, 'MONTH_DECREASE_PROGRESSIVELY', 1)
+# 递减年数
+YEAR_DECREASE_PROGRESSIVELY = getattr(settings, 'YEAR_DECREASE_PROGRESSIVELY', 1)
+
+# 初始月份
+DEFAULT_FIRST_MONTH = 1
+# 终止月份
+DEFAULT_LAST_MONTH = 12
