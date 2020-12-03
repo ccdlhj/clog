@@ -79,7 +79,7 @@ def export_clog(context, param):
     # generate url
     hostname = socket.gethostname()
     ip = socket.gethostbyname(hostname)
-    url = 'http://' + ip + ':' + str(NFS_CLOG_NGINX_PORT) + NFS_CLOG_PATH + clog_name + clog_uuid + '.zip'
+    url = 'http://' + ip + ':' + str(NFS_CLOG_NGINX_PORT) + clog_name + clog_uuid + '.zip'
     message = _('Clog was export successful')
     websocket.update_msg(notify_message, message=message,
                          exoport_url=url,
