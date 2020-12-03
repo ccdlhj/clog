@@ -9,9 +9,9 @@ CLOG_CSV_PATH = getattr(settings, 'CLOG_CSV_PATH', '/tmp/')
 
 CLOG_PAGE_SIZE = getattr(settings, 'CLOG_PAGE_SIZE', 2000000)
 
-NFS_CLOG_PATH = getattr(settings, 'NFS_PATH', '/NFS/CLOG/')
+NFS_CLOG_PATH = getattr(settings, 'NFS_PATH', '/nfs/clog/')
 
-NFS_CLOG_NGINX_PORT = getattr(settings, 'NFS_CLOG_NGINX_PORT', 9999)
+NFS_CLOG_NGINX_PORT = getattr(settings, 'NFS_CLOG_NGINX_PORT', 15657)
 
 MESSAGE_TYPE = enum(
     PORTAL_CLOG='portal_clog',
