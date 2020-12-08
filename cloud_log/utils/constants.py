@@ -7,7 +7,7 @@ CLOG_SAVE_UPPER_MONTH = getattr(settings, 'CLOG_SAVE_UPPER_MONTH', 24)
 
 CLOG_CSV_PATH = getattr(settings, 'CLOG_CSV_PATH', '/tmp/')
 
-CLOG_PAGE_SIZE = getattr(settings, 'CLOG_PAGE_SIZE', 2000000)
+CLOG_EXPORT_MAX_SIZE = getattr(settings, 'CLOG_PAGE_SIZE', 20000)
 
 NFS_CLOG_PATH = getattr(settings, 'NFS_PATH', '/nfs/clog/')
 
@@ -62,3 +62,6 @@ YEAR_DECREASE_PROGRESSIVELY = getattr(settings, 'YEAR_DECREASE_PROGRESSIVELY', 1
 DEFAULT_FIRST_MONTH = 1
 # 终止月份
 DEFAULT_LAST_MONTH = 12
+
+CSV_TITLE_CN = ['操作请求ID', '对象ID', '对象', '对象类型', '项目', '操作人', '访问IP', '任务类型ID', '任务', '状态',
+                '操作时间', '原始数据', '预期数据', '结果数据']
