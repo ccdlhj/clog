@@ -44,6 +44,7 @@ class ClogSchema(PortalSchema):
     result_data = fields.Dict(allow_none=True, help_text=_("Result Data"))
     extra = fields.Dict(allow_none=True, help_text=_("Extra"))
     sync_type = fields.String(max_len=255, help_text=_("Sync Type"))
+    related_resources = fields.String(max_len=1024, allow_none=True, help_text=_("Related Resources"))
     cloud_env_id = fields.UUID(help_text=_("Cloud Env ID"))
 
 

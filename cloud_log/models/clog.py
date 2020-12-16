@@ -11,6 +11,9 @@ class Clog(models.Model):
                             max_length=36, null=False)
     request_id = models.CharField(db_index=True, max_length=40,
                                   null=True, help_text="操作请求ID")
+
+    related_resources = models.TextField(max_length=1024, null=True,
+                                         help_text='关联资源id')
     object_uuid = models.CharField(max_length=36, db_index=True, null=True,
                                    help_text='对象ID')
     object_name = models.CharField(max_length=64, null=True,

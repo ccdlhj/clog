@@ -29,6 +29,7 @@ from cloud_log.utils.create_model import get_model, generate_clog_table_name
 
 clog_filter_keys = [
     'request_id',
+    'related_resources',
     'object_uuid',
     'object_name',
     'object_type',
@@ -77,6 +78,7 @@ def parse_clog_data(data):
         'result_data': data.get('result_data'),
         'extra': data.get('extra'),
         'sync_type': data.get('sync_type'),
+        'related_resources': data.get('related_resources'),
         'cloud_env_id': data.get('cloud_env_id'),
     }
     return clog
