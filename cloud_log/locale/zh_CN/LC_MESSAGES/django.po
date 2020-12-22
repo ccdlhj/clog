@@ -194,3 +194,9 @@ msgstr "同步类型"
 
 msgid "Cloud Env ID"
 msgstr "资源域ID"
+
+msgid "Clog is exporting"
+msgstr "日志正在导出"
+
+msgid "Clog was export successful"
+msgstr "日志导出成功"
