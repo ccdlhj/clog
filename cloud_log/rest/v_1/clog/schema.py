@@ -44,12 +44,16 @@ class ClogSchema(PortalSchema):
     result_data = fields.Dict(allow_none=True, help_text=_("Result Data"))
     extra = fields.Dict(allow_none=True, help_text=_("Extra"))
     sync_type = fields.String(max_len=255, help_text=_("Sync Type"))
-    related_resources = fields.String(max_len=1024, allow_none=True, help_text=_("Related Resources"))
+    related_resources = fields.String(max_len=-1, allow_none=True, help_text=_("Related Resources"))
     cloud_env_id = fields.UUID(help_text=_("Cloud Env ID"))
 
 
 class ClogSpawnSchema(ClogSchema):
     uuid = fields.UUID(allow_none=True, help_text=_('Clog UUID'))
+
+
+class BulkClogSpawnSchema(PortalSchema):
+    clog_data_list = fields.Nested("ClogSchema", many=True, load_only=True, help_text=_('Clog Data List'))
 
 
 class ClogUpdateSchema(ClogSchema):
@@ -65,6 +69,7 @@ class ClogListSchema(SortFiltersSchema):
     Paged = fields.Bool(load_only=True, help_text=_("Paged"))
     Limit = fields.Integer(load_only=True, help_text=_("Limit"))
     Offset = fields.Integer(load_only=True, help_text=_("Offset"))
+    related_resources = fields.String(load_only=True, help_text=_("related_resources"))
 
 
 class ClogDumSchema(ClogSchema):

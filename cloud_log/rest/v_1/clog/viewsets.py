@@ -1,5 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
+import json
+
 import datetime
 
 from django.db.models import Q
@@ -12,11 +14,13 @@ from uuid import uuid1
 from cloud_log.rest.v_1.clog import service
 from portal_rest import router
 from portal_rest import mixins
+from portal_rest import action
 from portal_rest import ServiceBaseViewSet
 from portal_rest.exceptions import ValidationError
 
 from cloud_log.models import Clog
 from cloud_log.rest.v_1.clog.schema import ClogListSchema
+from cloud_log.rest.v_1.clog.schema import BulkClogSpawnSchema
 from cloud_log.rest.v_1.clog.schema import ClogSpawnSchema
 from cloud_log.rest.v_1.clog.schema import ClogUpdateSchema
 from cloud_log.rest.v_1.clog.schema import ClogDumSchema
@@ -133,6 +137,7 @@ class ClogViewset(ServiceBaseViewSet,
                   mixins.SpawnResourceMixin, ):
     schema_class = ClogSpawnSchema
     dump_schema_class = ClogSpawnSchema
+    bulk_record_migration_schema_class = BulkClogSpawnSchema
 
     _atomic_functions = ()
 
@@ -151,6 +156,38 @@ class ClogViewset(ServiceBaseViewSet,
         except Exception as exc:
             msg = _("DB operation failed {message}").format(message=exc.message)
             raise ValidationError(msg)
+
+    @action()
+    def bulk_record_migration(self, data, ids, query_params):
+        """同步迁移日志使用"""
+        clog_data_list = data.get('clog_data_list', [])
+        clog_data_map = {}
+        for clog_data in clog_data_list:
+            event_id_dict = clog_data['extra']
+            cloud_env_id = clog_data['cloud_env_id']
+            uuid = clog_data.get('uuid') or uuid1()
+            clog_data.update({'uuid': uuid})
+            clog_name = generate_clog_table_name(clog_data['created_at'])
+            # TODO 查询优化，判断该日志是否被记录
+            if self.clog_exist(cloud_env_id, event_id_dict, clog_name):
+                continue
+            if clog_name in clog_data_map:
+                clog_data_map[clog_name].append(Clog(**clog_data))
+            else:
+                clog_data_map[clog_name] = [Clog(**clog_data)]
+        for table_name, list_data in clog_data_map.iteritems():
+            get_model(table_name, Clog).objects.bulk_create(list_data)
+        return True
+
+    def clog_exist(self, cloud_env_id, event_id_dict, clog_name):
+        try:
+            clog_model = get_model(clog_name, Clog)
+            clogs = clog_model.objects.filter(cloud_env_id=cloud_env_id,
+                                              extra__icontains=json.dumps(event_id_dict)[1:-1].replace(" ", "")
+                                              ).first()
+        except Exception:
+            clogs = None
+        return clogs
 
 
 @router()
@@ -234,6 +271,8 @@ class ClogViewset(ServiceBaseViewSet,
             query_args['created_at__gt'] = data.get('startTime')
         if data.get('endTime'):
             query_args['created_at__lte'] = data.get('endTime')
+        if data.get('related_resources'):
+            query_args['related_resources__contains'] = data.get('related_resources')
         if query_args:
             query &= Q(**query_args)
         return query
