@@ -29,7 +29,7 @@ from cloud_log.utils.common import CLOG_STATUS_RUNNING
 from cloud_log.utils.common import get_res_org_uuid_list
 from cloud_log.utils.constants import SYS_CLOG_OPERATION_IDS, CLOG_SAVE_UPPER_MONTH, MONTH_DECREASE_PROGRESSIVELY, \
     DEFAULT_FIRST_MONTH, DEFAULT_LAST_MONTH, YEAR_DECREASE_PROGRESSIVELY
-from cloud_log.utils.create_model import get_model, generate_clog_table_name
+from cloud_log.utils.create_model import get_model, generate_clog_table_name_by_datetime, generate_all_clog_table_name
 
 clog_filter_keys = [
     'request_id',
@@ -106,7 +106,7 @@ def validate_clog_in_all_tables(clog_uuid):
                 month = DEFAULT_LAST_MONTH
             else:
                 month -= MONTH_DECREASE_PROGRESSIVELY
-        clog_table_name = generate_clog_table_name(datetime.datetime(year, month, 1))
+        clog_table_name = generate_clog_table_name_by_datetime(datetime.datetime(year, month, 1))
         try:
             clog = get_model(clog_table_name, Clog).objects.get(uuid=clog_uuid)
             return clog
@@ -119,7 +119,7 @@ def validate_clog_in_all_tables(clog_uuid):
 def get_clog(clog_uuid, create_time):
     if create_time:
         try:
-            clog_table_name = generate_clog_table_name(create_time)
+            clog_table_name = generate_clog_table_name_by_datetime(create_time)
             return get_model(clog_table_name, Clog).objects.get(uuid=clog_uuid)
         except:
             msg = _('Clog {uuid} could not be found.').format(uuid=clog_uuid)
@@ -144,7 +144,7 @@ class ClogViewset(ServiceBaseViewSet,
     def perform_spawn(self, data, ids=None, query_params=None):
         """创建日志"""
         clog_data = parse_clog_data(data)
-        clog_name = generate_clog_table_name(data['created_at'])
+        clog_name = generate_clog_table_name_by_datetime(data['created_at'])
         try:
             clog_data['status'] = clog_data['status'] or CLOG_STATUS_RUNNING
             return get_model(clog_name, Clog).objects.create(**clog_data)
@@ -286,16 +286,41 @@ class ClogViewset(ServiceBaseViewSet,
     def clog_collect(self, data, limit=None, offset=None):
         query = self.build_collect_query(data)
         # get clog table
-        clog_name = generate_clog_table_name(data.get('startTime'))
-        clog_model = get_model(clog_name, Clog)
-        clogs = clog_model.objects.filter(query)
+        total_clogs = []
+        clog_total_count = 0
+        clog_table_name_sorting = service.get_clog_model_name_order_mode(sorting=data.get('Sorting'))
+        clog_names = generate_all_clog_table_name(data.get('startTime'), data.get('endTime'), clog_table_name_sorting)
         order_by = self.build_order_by(data.get('Sorting'))
-        if order_by:
+
+        # 获取日志数据
+        for clog_name in clog_names:
+            clog_model = get_model(clog_name, Clog)
+            clogs = service.get_clogs(clog_model, query=query)
+            try:
+                clog_datas_num = clogs.count()
+            except Exception as e:
+                continue
             clogs = clogs.order_by(*order_by)
-        if limit:
-            offset = offset or 0
-            clogs = clogs[offset:offset+limit]
-        return clogs
+            if limit:
+                initial_limit = limit
+                if clog_datas_num <= offset:
+                    offset -= clog_datas_num
+                else:
+                    if clog_datas_num >= offset + limit:
+                        clog_split_count = limit
+                    else:
+                        clog_split_count = clog_datas_num - offset
+                    clog_split = clogs[offset: offset + limit]
+                    total_clogs.append(clog_split)
+                    clog_total_count += clog_split_count
+                    offset -= clog_split_count
+                    limit -= clog_total_count
+                if clog_total_count == initial_limit:
+                    break
+            else:
+                clog_total_count += clog_datas_num
+                total_clogs = chain(total_clogs, clogs)
+        return total_clogs, clog_total_count
 
     def all_clog_collect(self, data, limit=None, offset=None):
         clog = None
@@ -311,7 +336,7 @@ class ClogViewset(ServiceBaseViewSet,
                 month = 12
             else:
                 month -= 1
-            clog_name = generate_clog_table_name(datetime.datetime(year, month, 1))
+            clog_name = generate_clog_table_name_by_datetime(datetime.datetime(year, month, 1))
             clog_model = get_model(clog_name, Clog)
             clogs = clog_model.objects.filter(query)
             order_by = self.build_order_by(data.get('Sorting'))
@@ -328,7 +353,7 @@ class ClogViewset(ServiceBaseViewSet,
 
     def perform_collect(self, data, ids=None, query_params=None):
         if data.get('startTime') and data.get('endTime'):
-            clogs = self.clog_collect(data)
+            clogs, clog_total_count = self.clog_collect(data)
         else:
             # get save time table
             clogs = self.all_clog_collect(data)
@@ -339,16 +364,19 @@ class ClogViewset(ServiceBaseViewSet,
 
     def perform_paged_collect(self, data, ids=None, query_params=None,
                               limit=None, offset=None):
-        clogs = self.clog_collect(data, limit=limit, offset=offset)
+        clogs, clog_total_count = self.clog_collect(data, limit=limit, offset=offset)
+        clog_datas = []
+        for clog in clogs:
+            clog_datas = chain(clog_datas, clog)
         try:
-            return list(clogs)
+            return clog_datas
         except BaseException:
             return []
 
     def perform_count(self, data, ids=None, query_params=None):
-        clogs = self.clog_collect(data)
+        clogs, clog_total_count = self.clog_collect(data)
         try:
-            return clogs.count()
+            return clog_total_count
         except BaseException:
             return 0
 
