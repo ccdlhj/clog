@@ -11,7 +11,9 @@ from django.utils.translation import ugettext_lazy as _
 
 from uuid import uuid1
 
+from cloud_log.exceptions import InternalServerError
 from cloud_log.rest.v_1.clog import service
+from cloud_log.utils.security import SecurityClient
 from portal_rest import router
 from portal_rest import mixins
 from portal_rest import action
@@ -57,6 +59,14 @@ clog_filter_keys = [
 ]
 
 clog_keys = ['uuid'] + clog_filter_keys
+
+
+def parese_execption(result, http_status):
+    if 300 < http_status < 500:
+        raise ValidationError(result.get('message'))
+    elif http_status >= 500:
+        raise InternalServerError(message=result.get('message'),
+                                  status_code=http_status)
 
 
 def parse_clog_data(data):
@@ -285,11 +295,20 @@ class ClogViewset(ServiceBaseViewSet,
 
     def clog_collect(self, data, limit=None, offset=None):
         query = self.build_collect_query(data)
+        security = SecurityClient()
+        http_success, result, http_status = security.show()
+        if not http_success:
+            parese_execption(result, http_status)
+        security_data = result.get('data')
+        clog_keep_time = security_data.get('clog_keep_time')
+        start_time, end_time = service.get_limit_time(data, clog_keep_time)
+        if not start_time and not end_time:
+            return [], 0
         # get clog table
         total_clogs = []
         clog_total_count = 0
         clog_table_name_sorting = service.get_clog_model_name_order_mode(sorting=data.get('Sorting'))
-        clog_names = generate_all_clog_table_name(data.get('startTime'), data.get('endTime'), clog_table_name_sorting)
+        clog_names = generate_all_clog_table_name(start_time, end_time, clog_table_name_sorting)
         order_by = self.build_order_by(data.get('Sorting'))
 
         # 获取日志数据
@@ -322,43 +341,10 @@ class ClogViewset(ServiceBaseViewSet,
                 total_clogs = chain(total_clogs, clogs)
         return total_clogs, clog_total_count
 
-    def all_clog_collect(self, data, limit=None, offset=None):
-        clog = None
-        query = self.build_collect_query(data)
-        now_date = datetime.datetime.now()
-        year = now_date.year
-        month = now_date.month
-        # get save clog time
-        clog_save_month = data.get('clog_save_time', 6)
-        for i in range(clog_save_month):
-            if month == 1:
-                year -= 1
-                month = 12
-            else:
-                month -= 1
-            clog_name = generate_clog_table_name_by_datetime(datetime.datetime(year, month, 1))
-            clog_model = get_model(clog_name, Clog)
-            clogs = clog_model.objects.filter(query)
-            order_by = self.build_order_by(data.get('Sorting'))
-            if order_by:
-                clogs = clogs.order_by(*order_by)
-            if limit:
-                offset = offset or 0
-                clogs = clogs[offset:offset + limit]
-            if clog:
-                clog = chain(clog, clogs)
-            else:
-                clog = clogs
-        return clog
-
     def perform_collect(self, data, ids=None, query_params=None):
-        if data.get('startTime') and data.get('endTime'):
-            clogs, clog_total_count = self.clog_collect(data)
-        else:
-            # get save time table
-            clogs = self.all_clog_collect(data)
+        clogs, clog_total_count = self.clog_collect(data)
         try:
-            return list(clogs)
+            return clogs
         except BaseException:
             return []
 
