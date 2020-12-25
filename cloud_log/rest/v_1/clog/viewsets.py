@@ -167,7 +167,7 @@ class ClogViewset(ServiceBaseViewSet,
             cloud_env_id = clog_data['cloud_env_id']
             uuid = clog_data.get('uuid') or uuid1()
             clog_data.update({'uuid': uuid})
-            clog_name = generate_clog_table_name(clog_data['created_at'])
+            clog_name = generate_clog_table_name_by_datetime(clog_data['created_at'])
             # TODO 查询优化，判断该日志是否被记录
             if self.clog_exist(cloud_env_id, event_id_dict, clog_name):
                 continue

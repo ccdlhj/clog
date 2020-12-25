@@ -45,10 +45,11 @@ def get_uuid_create_time(uuid):
 
 def get_clogs(clog_model_name, query=None):
     try:
-        clog_datas = clog_model_name.objects.all()
         if query:
-            clog_datas.filter(query)
-    except Exception as e:
+            clog_datas = clog_model_name.objects.filter(query)
+        else:
+            clog_datas = clog_model_name.objects.all()
+    except Exception:
         clog_datas = None
 
     return clog_datas
