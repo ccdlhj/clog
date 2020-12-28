@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 import datetime
+import re
 from uuid import UUID, uuid1
+from dateutil.relativedelta import relativedelta
 
 from django.conf import settings
+from portal_rest.exceptions import ValidationError
 
-from cloud_log.models.clog import Clog
+from django.utils.translation import ugettext_lazy as _
 from cloud_log.utils.constants import UUID_DEFAULT_VERSION
-from cloud_log.utils.create_model import get_model
 
 
 def set_date_start_and_end_filter(query_params):
@@ -62,3 +64,26 @@ def get_clog_model_name_order_mode(sorting=None):
         return getattr(settings, 'clog_name_order_mode', 'desc')
 
 
+def get_limit_time(data, clog_keep_time):
+    now_time = datetime.datetime.now()
+    default_clog_start_time = now_time - relativedelta(months=clog_keep_time)
+    default_clog_end_time = datetime.datetime(now_time.year, now_time.month, now_time.day, 23, 59, 59)
+    start_time = data.get('startTime')
+    end_time = data.get('endTime')
+    # 如果传进来的起始时间和终止时间都存在, 并且终止时间小于起始时间.
+    if start_time and end_time and end_time < start_time:
+        ValidationError(_('Clog collect time error'))
+
+    # 如果传进来的起始时间存在, 并且起始时间大于默认终止时间, 或者传进来终止时间存在, 并且终止时间小于默认起始时间.
+    if (start_time and start_time > default_clog_end_time) or (end_time and end_time < default_clog_start_time):
+        return None, None
+
+    # 如果传进来的起始时间存在, 并且起始时间小于默认起始时间, 或者未传起始时间.
+    if (start_time and start_time < default_clog_start_time) or not start_time:
+        start_time = default_clog_start_time
+
+    # 如果传进来的终止时间存在, 并且终止时间大于默认终止时间, 或者未传终止时间.
+    if (end_time and end_time > default_clog_end_time) or not end_time:
+        end_time = default_clog_end_time
+
+    return start_time, end_time
