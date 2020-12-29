@@ -54,6 +54,7 @@ clog_filter_keys = [
     'result_data',
     'extra',
     'cloud_env_id',
+    'sync_type'
 ]
 
 clog_keys = ['uuid'] + clog_filter_keys
