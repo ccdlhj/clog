@@ -83,7 +83,7 @@ def genarate_csv_files(param, clog_table_names, export_clog_dir_path, export_clo
             if clog_datas_num > 0:
                 clog_split = clogs[clog_export_start_index: clog_export_end_index]
                 clog_csv_datas.append(clog_split)
-                has_clog_data_count += clog_datas_num
+                has_clog_data_count += clog_split.count()
                 if has_clog_data_count == CLOG_EXPORT_MAX_SIZE:
                     # 生成csv文件名称
                     csv_file_name = genarate_csv_file_name(export_clog_dir_path, export_clog_zip_name)
