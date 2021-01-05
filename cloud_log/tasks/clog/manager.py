@@ -2,6 +2,8 @@
 import calendar
 import csv
 import codecs
+import json
+
 import datetime
 import os
 import socket
@@ -50,18 +52,25 @@ def genarate_csv_file_name(export_clog_dir_path, export_clog_zip_name):
 
 def wirte_export_clog_in_csv_file(clog_csv_datas, clog_path):
     # write csv title
-    with codecs.open(clog_path, 'ab+', 'gbk') as csvfile:
+    with codecs.open(clog_path, 'ab+', 'utf-8') as csvfile:
         csv_write = csv.writer(csvfile)
         csv_write.writerow(CSV_TITLE_CN)
         for clog_datas in clog_csv_datas:
             for clog_data in clog_datas:
+                if clog_data.status == 'SUCCESS':
+                    clog_data_status = '成功'
+                else:
+                    clog_data_status = '失败'
                 csv_write.writerow([clog_data.request_id, clog_data.object_uuid,
                                     clog_data.object_name, clog_data.object_type,
                                     clog_data.res_org_path, clog_data.user_name,
-                                    clog_data.ip_address, clog_data.operation_id,
-                                    clog_data.operation_name, clog_data.status,
-                                    clog_data.created_at, clog_data.origin_data,
-                                    clog_data.expected_data, clog_data.result_data])
+                                    clog_data.user_id, clog_data.ip_address,
+                                    clog_data.operation_id, clog_data.operation_name,
+                                    clog_data_status, clog_data.created_at,
+                                    clog_data.updated_at,
+                                    json.dumps(clog_data.origin_data, encoding='UTF-8', ensure_ascii=False),
+                                    json.dumps(clog_data.expected_data, encoding='UTF-8', ensure_ascii=False),
+                                    json.dumps(clog_data.result_data, encoding='UTF-8', ensure_ascii=False)])
 
 
 def genarate_csv_files(param, clog_table_names, export_clog_dir_path, export_clog_zip_name):
