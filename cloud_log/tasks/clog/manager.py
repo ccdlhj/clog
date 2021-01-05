@@ -72,7 +72,7 @@ def genarate_csv_files(param, clog_table_names, export_clog_dir_path, export_clo
     clog_export_end_index = CLOG_EXPORT_MAX_SIZE
     for clog_table_name in clog_table_names:
         clog_model = get_model(clog_table_name, Clog)
-        clogs = service.get_clogs(clog_model)
+        clogs = service.get_clogs(clog_model, query=param.get('filters'))
         try:
             clog_datas_num = clogs.count()
         except Exception as e:
