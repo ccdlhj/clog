@@ -80,3 +80,20 @@ class GenerateExportClogTaskSchema(PortalSchema):
     startTime = fields.String(help_text=_("Start Time"))
     endTime = fields.String(help_text=_("End Time"))
     export_clog_flag = fields.String(help_text=_("Export Clog Flag"))
+    Filters = fields.List(fields.Dict(), load_only=True, help_text=_("Filters"))
+
+class GenerateExportClogTaskDumpSchema(PortalSchema):
+    uuid = fields.UUID(dump_only=True, help_text=_("Task UUID"))
+    name = fields.String(dump_only=True, help_text=_("Task Name"))
+    context = fields.Dict(dump_only=True, help_text=_("Context"))
+    depends_on = fields.List(fields.String, allow_none=True,
+                             help_text=_("Depends On"))
+    param = fields.Dict(fields.String, help_text="Param")
+    startTime = fields.String(help_text=_("Start Time"))
+    endTime = fields.String(help_text=_("End Time"))
+    Filters = fields.Nested(FiltersSchema, many=True, load_only=True,
+                            help_text=_("Filters"))
+    export_clog_flag = fields.String(help_text=_("Export Clog Flag"))
+    obj_type = fields.String(dump_only=True, help_text=_("Obj Type"))
+    obj_id = fields.UUID(dump_only=True, help_text=_("Obj UUID"))
+    related_obj = fields.String(dump_only=True, help_text=_("Related Obj"))

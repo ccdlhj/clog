@@ -25,6 +25,19 @@ from cloud_log.utils.create_model import get_model, generate_all_clog_table_name
 from cloud_log.utils.taskinfo import update_task_info
 from cloud_log.utils.constants import CLOG_ACTIONS
 
+def build_filter_query(filters):
+    query_filter = Q()
+    if not filters:
+        return filters
+    for i in filters:
+        k = i.get('Name')
+        values = i.get('Values')
+        if not k or not values:
+            continue
+        for value in values:
+            query_filter |= Q(**{k: value})
+    return query_filter
+
 
 def generate_export_clog_zip_name(now_time, clog_uuid):
     return 'clog' + '_' + '{}'.format(now_time.year) \
@@ -81,7 +94,8 @@ def genarate_csv_files(param, clog_table_names, export_clog_dir_path, export_clo
     clog_export_end_index = CLOG_EXPORT_MAX_SIZE
     for clog_table_name in clog_table_names:
         clog_model = get_model(clog_table_name, Clog)
-        clogs = service.get_clogs(clog_model, query=param.get('filters'))
+        query = build_filter_query(param.get('filters'))
+        clogs = service.get_clogs(clog_model, query=query)
         try:
             clog_datas_num = clogs.count()
         except Exception as e:
