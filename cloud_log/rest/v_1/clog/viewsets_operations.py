@@ -10,17 +10,18 @@ from portal_rest import action
 @router()
 class ClogOperationViewSet(ClogViewset):
     generate_export_clog_task_schema_class = schema.GenerateExportClogTaskSchema
+    generate_export_clog_task_dump_schema_class = schema.GenerateExportClogTaskDumpSchema
 
     @action()
     def generate_export_clog_task(self, data, ids=None, query_params=None):
         start_time = data.get('startTime')
         end_time = data.get('endTime')
-        filters = self.build_collect_query(data)
+        filters = data.get('filters')
         sorting = data.get('sorting')
         export_clog_flag = data.get('export_clog_flag')
         context = create_context(self.request, message_type=MESSAGE_TYPE.PORTAL_CLOG)
         # generate export clog task
-        clog_task = template.generate_export_clog_task(context, start_time,
+        export_clog_task = template.generate_export_clog_task(context, start_time,
                                                        end_time, export_clog_flag, sorting=sorting, filters=filters)
 
-        return clog_task
+        return export_clog_task
