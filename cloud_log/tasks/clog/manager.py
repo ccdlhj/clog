@@ -39,6 +39,21 @@ def build_filter_query(filters):
     return query_filter
 
 
+def build_order_by(sorting):
+    order_bys = []
+    if sorting:
+        key = sorting['key']
+        order = sorting['order']
+        if order == 'asc':
+            oder_by = key
+        else:
+            oder_by = '-' + key
+        order_bys.append(oder_by)
+    else:
+        order_bys = ['-created_at']
+    return order_bys
+
+
 def generate_export_clog_zip_name(now_time, clog_uuid):
     return 'clog' + '_' + '{}'.format(now_time.year) \
            + '{}'.format(now_time.month) + '{}'.format(now_time.day) + '_' + clog_uuid
@@ -95,7 +110,9 @@ def genarate_csv_files(param, clog_table_names, export_clog_dir_path, export_clo
     for clog_table_name in clog_table_names:
         clog_model = get_model(clog_table_name, Clog)
         query = build_filter_query(param.get('filters'))
+        order_by = build_order_by(param.get('Sorting'))
         clogs = service.get_clogs(clog_model, query=query)
+        clogs = clogs.order_by(*order_by)
         try:
             clog_datas_num = clogs.count()
         except Exception as e:
