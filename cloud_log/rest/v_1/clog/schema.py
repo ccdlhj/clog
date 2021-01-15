@@ -80,7 +80,7 @@ class GenerateExportClogTaskSchema(PortalSchema):
     startTime = fields.String(help_text=_("Start Time"))
     endTime = fields.String(help_text=_("End Time"))
     export_clog_flag = fields.String(help_text=_("Export Clog Flag"))
-    Filters = fields.List(fields.Dict(), load_only=True, help_text=_("Filters"))
+    filters = fields.List(fields.Dict(), load_only=True, help_text=_("Filters"))
 
 class GenerateExportClogTaskDumpSchema(PortalSchema):
     uuid = fields.UUID(dump_only=True, help_text=_("Task UUID"))
