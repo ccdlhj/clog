@@ -2,6 +2,32 @@
 from django.conf import settings
 from portal_core.utils import enum
 
+clog_filter_keys = [
+    'request_id',
+    'related_resources',
+    'object_uuid',
+    'object_name',
+    'object_type',
+    'res_org_id',
+    'res_org_name',
+    'res_org_id_path',
+    'res_org_path',
+    'user_id',
+    'user_name',
+    'ip_address',
+    'operation_id',
+    'operation_name',
+    'status',
+    'created_at',
+    'updated_at',
+    'origin_data',
+    'expected_data',
+    'result_data',
+    'extra',
+    'cloud_env_id',
+    'sync_type'
+]
+
 CLOG_SAVE_LOWER_MONTH = getattr(settings, 'CLOG_SAVE_LOWER_MONTH', 6)
 CLOG_SAVE_UPPER_MONTH = getattr(settings, 'CLOG_SAVE_UPPER_MONTH', 24)
 

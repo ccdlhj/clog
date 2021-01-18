@@ -5,10 +5,14 @@ from uuid import UUID, uuid1
 from dateutil.relativedelta import relativedelta
 
 from django.conf import settings
+
+from cloud_log.models import Clog
+from cloud_log.utils.create_model import generate_clog_table_name_by_datetime, get_model
 from portal_rest.exceptions import ValidationError
 
 from django.utils.translation import ugettext_lazy as _
-from cloud_log.utils.constants import UUID_DEFAULT_VERSION
+from cloud_log.utils.constants import UUID_DEFAULT_VERSION, CLOG_SAVE_UPPER_MONTH, DEFAULT_FIRST_MONTH, \
+    YEAR_DECREASE_PROGRESSIVELY, DEFAULT_LAST_MONTH, MONTH_DECREASE_PROGRESSIVELY
 
 
 def set_date_start_and_end_filter(query_params):
@@ -87,3 +91,47 @@ def get_limit_time(data, clog_keep_time):
         end_time = default_clog_end_time
 
     return start_time, end_time
+
+
+def get_now_date():
+    # 获取之前安全设置时间内的时间
+    now_date = datetime.datetime.now()
+    year = now_date.year
+    month = now_date.month
+    return now_date, year, month
+
+
+def validate_clog_in_all_tables(clog_uuid):
+    now_date, year, month = get_now_date()
+    clog_save_upper_month = CLOG_SAVE_UPPER_MONTH
+    for i in range(clog_save_upper_month - 1):
+        if i != 0:
+            if month == DEFAULT_FIRST_MONTH:
+                year -= YEAR_DECREASE_PROGRESSIVELY
+                month = DEFAULT_LAST_MONTH
+            else:
+                month -= MONTH_DECREASE_PROGRESSIVELY
+        clog_table_name = generate_clog_table_name_by_datetime(datetime.datetime(year, month, 1))
+        try:
+            clog = get_model(clog_table_name, Clog).objects.get(uuid=clog_uuid)
+            return clog
+        except Exception as e:
+            continue
+
+    return None
+
+
+def get_clog(clog_uuid, create_time):
+    if create_time:
+        try:
+            clog_table_name = generate_clog_table_name_by_datetime(create_time)
+            return get_model(clog_table_name, Clog).objects.get(uuid=clog_uuid)
+        except:
+            msg = _('Clog {uuid} could not be found.').format(uuid=clog_uuid)
+            raise ValidationError(msg)
+    else:
+        clog = validate_clog_in_all_tables(clog_uuid)
+        if not clog:
+            msg = _('Clog {uuid} could not be found.').format(uuid=clog_uuid)
+            raise ValidationError(msg)
+        return clog

@@ -19,6 +19,7 @@ from django.utils.translation import ugettext_lazy as _
 from cloud_log.models.clog import Clog
 from cloud_log.rest.v_1.clog import service
 from cloud_log.utils import websocket, taskinfo
+from cloud_log.tasks.clog import utils
 from cloud_log.utils.constants import CLOG_CSV_PATH, NFS_CLOG_PATH, NFS_CLOG_NGINX_PORT, MESSAGE_TYPE, \
     TASK_STATUS, PROCESS, CSV_TITLE_CN, CLOG_EXPORT_MAX_SIZE
 from cloud_log.utils.create_model import get_model, generate_all_clog_table_name
@@ -89,6 +90,15 @@ def wirte_export_clog_in_csv_file(clog_csv_datas, clog_path):
                     clog_data_status = '成功'
                 else:
                     clog_data_status = '失败'
+                origin_data = json.dumps(clog_data.origin_data, encoding='UTF-8', ensure_ascii=False)
+                if origin_data == u'{"clog_operation_message": "\u65e0"}':
+                    origin_data = '无'
+                expected_data = json.dumps(clog_data.expected_data, encoding='UTF-8', ensure_ascii=False)
+                if expected_data == u'{"clog_operation_message": "\u65e0"}':
+                    expected_data = '无'
+                result_data = json.dumps(clog_data.result_data, encoding='UTF-8', ensure_ascii=False)
+                if result_data == u'{"clog_operation_message": "\u65e0"}':
+                    result_data = '无'
                 csv_write.writerow([clog_data.request_id, clog_data.object_uuid,
                                     clog_data.object_name, clog_data.object_type,
                                     clog_data.res_org_path, clog_data.user_name,
@@ -96,9 +106,8 @@ def wirte_export_clog_in_csv_file(clog_csv_datas, clog_path):
                                     clog_data.operation_id, clog_data.operation_name,
                                     clog_data_status, clog_data.created_at,
                                     clog_data.updated_at,
-                                    json.dumps(clog_data.origin_data, encoding='UTF-8', ensure_ascii=False),
-                                    json.dumps(clog_data.expected_data, encoding='UTF-8', ensure_ascii=False),
-                                    json.dumps(clog_data.result_data, encoding='UTF-8', ensure_ascii=False)])
+                                    origin_data, expected_data,
+                                    result_data])
 
 
 def genarate_csv_files(param, clog_table_names, export_clog_dir_path, export_clog_zip_name):
@@ -187,6 +196,16 @@ def export_clog(context, param):
     shutil.move(export_clog_dir_path + '.zip', NFS_CLOG_PATH)
     # generate url
     clog_export_url = generate_clog_export_url(export_clog_zip_name)
+    # update export clog log
+    result_data = {
+        "开始时间": param.get('startTime'),
+        "结束时间": param.get('endTime'),
+        "所选择的搜索项": param.get('filters'),
+        "导出文件名称": export_clog_zip_name,
+        "导出文件大小": str(os.path.getsize(export_clog_dir_path)) + 'MB'
+    }
+    clog_uuid = param.get('export_clog_log_infos')[0].get('clog_uuid')
+    utils.update_clog_status(clog_uuid, is_success=True, result_data=result_data)
     message = _('Clog was export successful')
     websocket.update_msg(notify_message, message=message,
                          exoport_url=clog_export_url,
