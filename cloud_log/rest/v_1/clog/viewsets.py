@@ -29,35 +29,8 @@ from cloud_log.rest.v_1.clog.schema import ClogDumSchema
 from cloud_log.utils.common import RES_ORG_TYPE
 from cloud_log.utils.common import CLOG_STATUS_RUNNING
 from cloud_log.utils.common import get_res_org_uuid_list
-from cloud_log.utils.constants import SYS_CLOG_OPERATION_IDS, CLOG_SAVE_UPPER_MONTH, MONTH_DECREASE_PROGRESSIVELY, \
-    DEFAULT_FIRST_MONTH, DEFAULT_LAST_MONTH, YEAR_DECREASE_PROGRESSIVELY
+from cloud_log.utils.constants import SYS_CLOG_OPERATION_IDS, clog_filter_keys
 from cloud_log.utils.create_model import get_model, generate_clog_table_name_by_datetime, generate_all_clog_table_name
-
-clog_filter_keys = [
-    'request_id',
-    'related_resources',
-    'object_uuid',
-    'object_name',
-    'object_type',
-    'res_org_id',
-    'res_org_name',
-    'res_org_id_path',
-    'res_org_path',
-    'user_id',
-    'user_name',
-    'ip_address',
-    'operation_id',
-    'operation_name',
-    'status',
-    'created_at',
-    'updated_at',
-    'origin_data',
-    'expected_data',
-    'result_data',
-    'extra',
-    'cloud_env_id',
-    'sync_type'
-]
 
 clog_keys = ['uuid'] + clog_filter_keys
 
@@ -97,50 +70,6 @@ def parse_clog_data(data):
         'cloud_env_id': data.get('cloud_env_id'),
     }
     return clog
-
-
-def get_now_date():
-    # 获取之前安全设置时间内的时间
-    now_date = datetime.datetime.now()
-    year = now_date.year
-    month = now_date.month
-    return now_date, year, month
-
-
-def validate_clog_in_all_tables(clog_uuid):
-    now_date, year, month = get_now_date()
-    clog_save_upper_month = CLOG_SAVE_UPPER_MONTH
-    for i in range(clog_save_upper_month - 1):
-        if i != 0:
-            if month == DEFAULT_FIRST_MONTH:
-                year -= YEAR_DECREASE_PROGRESSIVELY
-                month = DEFAULT_LAST_MONTH
-            else:
-                month -= MONTH_DECREASE_PROGRESSIVELY
-        clog_table_name = generate_clog_table_name_by_datetime(datetime.datetime(year, month, 1))
-        try:
-            clog = get_model(clog_table_name, Clog).objects.get(uuid=clog_uuid)
-            return clog
-        except Exception as e:
-            continue
-
-    return None
-
-
-def get_clog(clog_uuid, create_time):
-    if create_time:
-        try:
-            clog_table_name = generate_clog_table_name_by_datetime(create_time)
-            return get_model(clog_table_name, Clog).objects.get(uuid=clog_uuid)
-        except:
-            msg = _('Clog {uuid} could not be found.').format(uuid=clog_uuid)
-            raise ValidationError(msg)
-    else:
-        clog = validate_clog_in_all_tables(clog_uuid)
-        if not clog:
-            msg = _('Clog {uuid} could not be found.').format(uuid=clog_uuid)
-            raise ValidationError(msg)
-        return clog
 
 
 @router()
@@ -380,14 +309,14 @@ class ClogSpcViewset(ServiceBaseViewSet,
         clog_uuid = ids['uuid']
         # get uuid create time
         create_time = service.get_uuid_create_time(clog_uuid)
-        return get_clog(clog_uuid, create_time)
+        return service.get_clog(clog_uuid, create_time)
 
     def perform_modify(self, data, ids=None, query_params=None):
         """更新日志"""
         try:
             clog_uuid = ids['uuid']
             create_time = service.get_uuid_create_time(clog_uuid)
-            clog = get_clog(clog_uuid, create_time)
+            clog = service.get_clog(clog_uuid, create_time)
 
             for k in clog_keys:
                 if k in data:

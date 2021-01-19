@@ -80,6 +80,7 @@ class GenerateExportClogTaskSchema(PortalSchema):
     startTime = fields.String(help_text=_("Start Time"))
     endTime = fields.String(help_text=_("End Time"))
     export_clog_flag = fields.String(help_text=_("Export Clog Flag"))
+    log_infos = fields.List(fields.Dict(), help_text=_("Log Infos"))
     filters = fields.List(fields.Dict(), load_only=True, help_text=_("Filters"))
 
 class GenerateExportClogTaskDumpSchema(PortalSchema):
@@ -93,6 +94,7 @@ class GenerateExportClogTaskDumpSchema(PortalSchema):
     endTime = fields.String(help_text=_("End Time"))
     Filters = fields.Nested(FiltersSchema, many=True, load_only=True,
                             help_text=_("Filters"))
+    export_clog_log_infos = fields.List(fields.Dict(), help_text=_("Export Clog Log Infos"))
     export_clog_flag = fields.String(help_text=_("Export Clog Flag"))
     obj_type = fields.String(dump_only=True, help_text=_("Obj Type"))
     obj_id = fields.UUID(dump_only=True, help_text=_("Obj UUID"))
