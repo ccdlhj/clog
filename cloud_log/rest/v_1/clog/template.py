@@ -3,11 +3,15 @@ from cloud_log.utils.create_job import generate_task
 
 
 def generate_export_clog_task(context, start_time, end_time, export_clog_flag,
-                              sorting=None, filters=None, export_clog_log_infos=None, timeout=300):
+                              sorting=None, filters=None, export_clog_log_infos=None,
+                              export_clog_log_start_time=None,
+                              export_clog_log_end_time=None, timeout=300):
     task_name = 'export_clog'
     params = {
         'startTime': start_time,
         'endTime': end_time,
+        'export_clog_log_start_time': export_clog_log_start_time,
+        'export_clog_log_end_time': export_clog_log_end_time,
         'filters': filters,
         'Sorting': sorting,
         'export_clog_log_infos': export_clog_log_infos,

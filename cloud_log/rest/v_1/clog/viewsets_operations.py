@@ -18,12 +18,17 @@ class ClogOperationViewSet(ClogViewset):
         end_time = data.get('endTime')
         filters = data.get('filters')
         sorting = data.get('sorting')
+        export_clog_log_start_time = data.get('export_clog_log_start_time')
+        export_clog_log_end_time = data.get('export_clog_log_end_time')
         export_clog_flag = data.get('export_clog_flag')
         export_clog_log_infos = data.get('log_infos')
         context = create_context(self.request, message_type=MESSAGE_TYPE.PORTAL_CLOG)
         # generate export clog task
         export_clog_task = template.generate_export_clog_task(context, start_time,
-                                                       end_time, export_clog_flag, sorting=sorting, filters=filters,
-                                                       export_clog_log_infos=export_clog_log_infos)
+                                                              end_time, export_clog_flag,
+                                                              sorting=sorting, filters=filters,
+                                                              export_clog_log_infos=export_clog_log_infos,
+                                                              export_clog_log_start_time=export_clog_log_start_time,
+                                                              export_clog_log_end_time=export_clog_log_end_time)
 
         return export_clog_task
