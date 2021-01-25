@@ -91,3 +91,25 @@ DEFAULT_LAST_MONTH = 12
 
 CSV_TITLE_CN = ['操作请求ID', '对象ID', '对象', '对象类型', '项目', '操作人', '操作人ID', '访问IP', '任务类型ID', '任务', '状态',
                 '操作时间', '更新时间', '原始数据', '预期数据', '结果数据']
+
+FILTER_NAME_CN = {
+    'REQUEST_ID': '操作请求ID',
+    'OBJECT_NAME': '对象',
+    'OBJECT_UUID': '对象ID',
+    'OPERATION_NAME': '任务',
+    'USER_NAME': '操作人',
+    'USER_ID': '操作人ID',
+    'RES_ORG_PATH': '项目',
+    'IP_ADDRESS': '访问IP',
+    'STATUS': '状态',
+    'OPERATION_ID':'任务类型ID'
+}
+
+# 文件大小进制转换
+FILE_BINARY_SIZE = enum(
+    B = 1,
+    KB = 1024,
+    MB = 1048576,
+    GB = 1073741824,
+    TB = 1099511627776
+)

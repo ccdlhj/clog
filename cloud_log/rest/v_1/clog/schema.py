@@ -77,6 +77,8 @@ class ClogDumSchema(ClogSchema):
 
 
 class GenerateExportClogTaskSchema(PortalSchema):
+    export_clog_log_start_time = fields.String(help_text=_("Export Clog Log Start Time"))
+    export_clog_log_end_time = fields.String(help_text=_("Export Clog Log End Time"))
     startTime = fields.String(help_text=_("Start Time"))
     endTime = fields.String(help_text=_("End Time"))
     export_clog_flag = fields.String(help_text=_("Export Clog Flag"))
@@ -90,6 +92,8 @@ class GenerateExportClogTaskDumpSchema(PortalSchema):
     depends_on = fields.List(fields.String, allow_none=True,
                              help_text=_("Depends On"))
     param = fields.Dict(fields.String, help_text="Param")
+    export_clog_log_start_time = fields.String(help_text=_("Export Clog Log Start Time"))
+    export_clog_log_end_time = fields.String(help_text=_("Export Clog Log End Time"))
     startTime = fields.String(help_text=_("Start Time"))
     endTime = fields.String(help_text=_("End Time"))
     Filters = fields.Nested(FiltersSchema, many=True, load_only=True,

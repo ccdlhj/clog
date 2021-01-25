@@ -21,10 +21,46 @@ from cloud_log.rest.v_1.clog import service
 from cloud_log.utils import websocket, taskinfo
 from cloud_log.tasks.clog import utils
 from cloud_log.utils.constants import CLOG_CSV_PATH, NFS_CLOG_PATH, NFS_CLOG_NGINX_PORT, MESSAGE_TYPE, \
-    TASK_STATUS, PROCESS, CSV_TITLE_CN, CLOG_EXPORT_MAX_SIZE
+    TASK_STATUS, PROCESS, CSV_TITLE_CN, CLOG_EXPORT_MAX_SIZE, FILTER_NAME_CN, clog_filter_keys, FILE_BINARY_SIZE
 from cloud_log.utils.create_model import get_model, generate_all_clog_table_name
 from cloud_log.utils.taskinfo import update_task_info
 from cloud_log.utils.constants import CLOG_ACTIONS
+
+
+def get_clog_zip_size_name(size, FILE_BINARY_SIZE=1, BINARY_NAME=None):
+    return '%.2f' % float(size / FILE_BINARY_SIZE) + BINARY_NAME
+
+
+def get_clog_zip_size(NFS_CLOG_PATH, export_clog_zip_name):
+    size = os.path.getsize(NFS_CLOG_PATH + export_clog_zip_name + '.zip')
+    if size < FILE_BINARY_SIZE.KB:
+        return get_clog_zip_size_name(size, FILE_BINARY_SIZE=FILE_BINARY_SIZE.B, BINARY_NAME='B')
+    elif FILE_BINARY_SIZE.KB <= size < FILE_BINARY_SIZE.MB:
+        return get_clog_zip_size_name(size, FILE_BINARY_SIZE=FILE_BINARY_SIZE.KB, BINARY_NAME='KB')
+    elif FILE_BINARY_SIZE.MB <= size < FILE_BINARY_SIZE.GB:
+        return get_clog_zip_size_name(size, FILE_BINARY_SIZE=FILE_BINARY_SIZE.MB, BINARY_NAME='MB')
+    elif FILE_BINARY_SIZE.GB <= size < FILE_BINARY_SIZE.TB:
+        return get_clog_zip_size_name(size, FILE_BINARY_SIZE=FILE_BINARY_SIZE.GB, BINARY_NAME='GB')
+    elif FILE_BINARY_SIZE.TB <= size:
+        return get_clog_zip_size_name(size, FILE_BINARY_SIZE=FILE_BINARY_SIZE.TB, BINARY_NAME='TB')
+
+
+def get_export_clog_filter(filters):
+    for filter_data in filters:
+        filter_dict = {}
+        filter_name = filter_data.get('Name')
+        filter_value = filter_data.get('Values')[0]
+        if filter_name.endswith('__icontains'):
+            name = filter_name.replace('__icontains', '')
+        else:
+            name = filter_name
+        if name not in clog_filter_keys:
+            continue
+        filter_dict = {
+            FILTER_NAME_CN.get(name.upper()): filter_value
+        }
+    return filter_dict
+
 
 def build_filter_query(filters):
     query_filter = Q()
@@ -205,12 +241,18 @@ def export_clog(context, param):
     # generate url
     clog_export_url = generate_clog_export_url(export_clog_zip_name)
     # update export clog log
+    if param.get('filters'):
+        filter = get_export_clog_filter(param.get('filters'))
+    else:
+        filter = '无'
+    # get clog zip size(mb)
+    clog_size = get_clog_zip_size(NFS_CLOG_PATH, export_clog_zip_name)
     result_data = {
-        "开始时间": param.get('startTime'),
-        "结束时间": param.get('endTime'),
-        "所选择的搜索项": param.get('filters'),
+        "开始时间": param.get('export_clog_log_start_time'),
+        "结束时间": param.get('export_clog_log_end_time'),
+        "所选择的搜索项": filter,
         "导出文件名称": export_clog_zip_name,
-        "导出文件大小": str(os.path.getsize(export_clog_dir_path)) + 'MB'
+        "导出文件大小": clog_size
     }
     clog_uuid = param.get('export_clog_log_infos')[0].get('clog_uuid')
     utils.update_clog_status(clog_uuid, is_success=True, result_data=result_data)
