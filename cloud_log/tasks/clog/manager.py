@@ -125,6 +125,10 @@ def genarate_csv_files(param, clog_table_names, export_clog_dir_path, export_clo
         try:
             clog_datas_num = clogs.count()
         except Exception as e:
+            # 生成带列名的空csv文件
+            csv_file_name = genarate_csv_file_name(export_clog_dir_path, export_clog_zip_name)
+            clog_csv_path = generate_csv_path(export_clog_dir_path, csv_file_name)
+            wirte_export_clog_in_csv_file(clog_csv_datas, clog_csv_path)
             continue
         clog_split_count = clog_datas_num / CLOG_EXPORT_MAX_SIZE
         # 生成日志的csv文件
@@ -171,8 +175,12 @@ def export_clog(context, param):
     update_task_info(task_id, status=TASK_STATUS.START, process_status=PROCESS.START)
 
     # generate clog model name
-    start_time = datetime.datetime.strptime(param.get('startTime'), "%Y-%m-%d %H:%M:%S")
-    end_time = datetime.datetime.strptime(param.get('endTime'), "%Y-%m-%d %H:%M:%S")
+    if param.get('startTime') and param.get('endTime'):
+        start_time = datetime.datetime.strptime(param.get('startTime'), "%Y-%m-%d %H:%M:%S")
+        end_time = datetime.datetime.strptime(param.get('endTime'), "%Y-%m-%d %H:%M:%S")
+    else:
+        start_time = datetime.datetime.now()
+        end_time = datetime.datetime.now()
     clog_table_name_sorting = service.get_clog_model_name_order_mode(param.get('Sorting'))
     clog_table_names = generate_all_clog_table_name(start_time, end_time, clog_table_name_sorting)
     clog_uuid = uuidutils.generate_uuid()
