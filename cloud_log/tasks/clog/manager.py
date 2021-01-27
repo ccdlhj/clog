@@ -65,7 +65,7 @@ def get_export_clog_filter(filters):
 def build_filter_query(filters):
     query_filter = Q()
     if not filters:
-        return filters
+        return query_filter
     for i in filters:
         k = i.get('Name')
         values = i.get('Values')
@@ -74,6 +74,19 @@ def build_filter_query(filters):
         for value in values:
             query_filter |= Q(**{k: value})
     return query_filter
+
+
+def build_date_query(query, param):
+    query_args = {}
+    if param.get('startTime'):
+        query_args['created_at__gt'] = param.get('startTime')
+    if param.get('endTime'):
+        query_args['created_at__lte'] = param.get('endTime')
+    if param.get('related_resources'):
+        query_args['related_resources__contains'] = param.get('related_resources')
+    if query_args:
+        query &= Q(**query_args)
+    return query
 
 
 def build_order_by(sorting):
@@ -155,12 +168,16 @@ def genarate_csv_files(param, clog_table_names, export_clog_dir_path, export_clo
     for clog_table_name in clog_table_names:
         clog_model = get_model(clog_table_name, Clog)
         query = build_filter_query(param.get('filters'))
+        query = build_date_query(query, param)
         order_by = build_order_by(param.get('Sorting'))
         clogs = service.get_clogs(clog_model, query=query)
         clogs = clogs.order_by(*order_by)
         try:
             clog_datas_num = clogs.count()
         except Exception as e:
+            # 判断是否有文件
+            if os.listdir(export_clog_dir_path):
+                continue
             # 生成带列名的空csv文件
             csv_file_name = genarate_csv_file_name(export_clog_dir_path, export_clog_zip_name)
             clog_csv_path = generate_csv_path(export_clog_dir_path, csv_file_name)
@@ -217,6 +234,8 @@ def export_clog(context, param):
     else:
         start_time = datetime.datetime.now()
         end_time = datetime.datetime.now()
+        param['startTime'] = start_time
+        param['endTime'] = end_time
     clog_table_name_sorting = service.get_clog_model_name_order_mode(param.get('Sorting'))
     clog_table_names = generate_all_clog_table_name(start_time, end_time, clog_table_name_sorting)
     clog_uuid = uuidutils.generate_uuid()

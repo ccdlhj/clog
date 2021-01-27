@@ -200,3 +200,6 @@ msgstr "日志正在导出"
 
 msgid "Clog was export successful"
 msgstr "日志导出成功"
+
+msgid "Clog start exporting"
+msgstr "开始导出日志"
