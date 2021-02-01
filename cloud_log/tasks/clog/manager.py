@@ -175,13 +175,6 @@ def genarate_csv_files(param, clog_table_names, export_clog_dir_path, export_clo
         try:
             clog_datas_num = clogs.count()
         except Exception as e:
-            # 判断是否有文件
-            if os.listdir(export_clog_dir_path):
-                continue
-            # 生成带列名的空csv文件
-            csv_file_name = genarate_csv_file_name(export_clog_dir_path, export_clog_zip_name)
-            clog_csv_path = generate_csv_path(export_clog_dir_path, csv_file_name)
-            wirte_export_clog_in_csv_file(clog_csv_datas, clog_csv_path)
             continue
         clog_split_count = clog_datas_num / CLOG_EXPORT_MAX_SIZE
         # 生成日志的csv文件
@@ -208,6 +201,12 @@ def genarate_csv_files(param, clog_table_names, export_clog_dir_path, export_clo
 
     # 判断是否最后有剩余的日志未生成csv文件
     if clog_csv_datas:
+        csv_file_name = genarate_csv_file_name(export_clog_dir_path, export_clog_zip_name)
+        clog_csv_path = generate_csv_path(export_clog_dir_path, csv_file_name)
+        wirte_export_clog_in_csv_file(clog_csv_datas, clog_csv_path)
+    # 判断是否有文件
+    if not os.listdir(export_clog_dir_path):
+        # 生成带列名的空csv文件
         csv_file_name = genarate_csv_file_name(export_clog_dir_path, export_clog_zip_name)
         clog_csv_path = generate_csv_path(export_clog_dir_path, csv_file_name)
         wirte_export_clog_in_csv_file(clog_csv_datas, clog_csv_path)
