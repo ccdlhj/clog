@@ -24,7 +24,7 @@ from cloud_log.utils.common import RES_ORG_TYPE
 from cloud_log.utils.constants import CLOG_CSV_PATH, NFS_CLOG_PATH, NFS_CLOG_NGINX_PORT, MESSAGE_TYPE, \
     TASK_STATUS, PROCESS, CSV_TITLE_CN, CLOG_EXPORT_MAX_SIZE, FILTER_NAME_CN, clog_filter_keys, FILE_BINARY_SIZE
 from cloud_log.utils.create_model import get_model, generate_all_clog_table_name
-from cloud_log.utils.identity_client import IdentityClient
+from cloud_log.utils.client import IdentityClient
 from cloud_log.utils.taskinfo import update_task_info
 from cloud_log.utils.constants import CLOG_ACTIONS
 
