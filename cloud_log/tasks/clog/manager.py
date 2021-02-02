@@ -50,7 +50,8 @@ def get_clog_zip_size(NFS_CLOG_PATH, export_clog_zip_name):
 def build_res_org_query(query, res_org_type=None, res_org_uuid=None):
     if res_org_type == RES_ORG_TYPE.SYS:
         return query
-    query &= Q(res_org_id__in=res_org_uuid)
+    if res_org_uuid:
+        query &= Q(res_org_id=res_org_uuid)
     return query
 
 
