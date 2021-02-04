@@ -23,18 +23,18 @@ class ClogSchema(PortalSchema):
     request_id = fields.String(validate=validate_request_id,
                                help_text=_("Request ID"))
     object_uuid = fields.String(help_text=_("Object UUID"))
-    object_name = fields.String(max_len=255, help_text=_("Object Name"))
+    object_name = fields.String(max_len=255, allow_none=True, help_text=_("Object Name"))
     object_type = fields.String(help_text=_("Object Type"))
     res_org_id = fields.UUID(help_text=_("Res Org ID"))
-    res_org_name = fields.String(max_len=64, help_text=_("Res Org Name"))
-    res_org_id_path = fields.String(max_len=1024,
+    res_org_name = fields.String(max_len=64, allow_none=True, help_text=_("Res Org Name"))
+    res_org_id_path = fields.String(max_len=1024, allow_none=True,
                                     help_text=_("Res Org ID Path"))
-    res_org_path = fields.String(max_len=1024, help_text=_("Res Org Name Path"))
+    res_org_path = fields.String(max_len=1024, allow_none=True, help_text=_("Res Org Name Path"))
     user_id = fields.Integer(help_text=_("User ID"))
-    user_name = fields.String(max_len=64, help_text=_("User Name"))
+    user_name = fields.String(max_len=64, allow_none=True, help_text=_("User Name"))
     ip_address = fields.IPAddress(allow_none=True, help_text=_("Ip Address"))
     operation_id = fields.Integer(help_text=_("Operation ID"))
-    operation_name = fields.String(max_len=255, help_text=_("Operation Name"))
+    operation_name = fields.String(max_len=255, allow_none=True, help_text=_("Operation Name"))
     status = fields.String(validate=validate_clog_status,
                            help_text=_("Clog Status"))
     created_at = fields.DateTime(allow_none=True, help_text=_("Create Time"))
@@ -43,7 +43,7 @@ class ClogSchema(PortalSchema):
     expected_data = fields.Dict(allow_none=True, help_text=_("Expected Data"))
     result_data = fields.Dict(allow_none=True, help_text=_("Result Data"))
     extra = fields.Dict(allow_none=True, help_text=_("Extra"))
-    sync_type = fields.String(max_len=255, help_text=_("Sync Type"))
+    sync_type = fields.String(allow_none=True, help_text=_("Sync Type"))
     related_resources = fields.String(max_len=-1, allow_none=True, help_text=_("Related Resources"))
     cloud_env_id = fields.UUID(help_text=_("Cloud Env ID"))
 
