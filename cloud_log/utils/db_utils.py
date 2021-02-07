@@ -11,14 +11,12 @@ logger = logging.getLogger(__name__)
 
 def generate_clog_table_name_by_year_month(year, month):
     # generate clog table name
-    return 'clog' + '_' + str(year) + '_' + str(month)
+    return 'clog_{year:02d}_{month:02d}'.format(year=year, month=month)
 
 
 def generate_clog_table_name_by_datetime(clog_datetime):
     # generate clog table name
-    year = clog_datetime.year
-    month = clog_datetime.month
-    return 'clog' + '_' + str(year) + '_' + str(month)
+    return generate_clog_table_name_by_year_month(clog_datetime.year, clog_datetime.month)
 
 
 def generate_all_clog_table_name(start_time, end_time, clog_table_name_sorting):
@@ -27,10 +25,7 @@ def generate_all_clog_table_name(start_time, end_time, clog_table_name_sorting):
     for mon in range(start_time.month - 1, start_time.month + months):
         clog_model_name = generate_clog_table_name_by_year_month(start_time.year + mon // 12, mon % 12 + 1)
         clog_model_names.append(clog_model_name)
-    if clog_table_name_sorting == 'desc':
-        clog_model_name_reverse = True
-    else:
-        clog_model_name_reverse = False
+    clog_model_name_reverse = clog_table_name_sorting == 'desc'
     return sorted(clog_model_names, reverse=clog_model_name_reverse)
 
 

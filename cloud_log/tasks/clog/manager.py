@@ -23,7 +23,7 @@ from cloud_log.tasks.clog import utils
 from cloud_log.utils.common import RES_ORG_TYPE
 from cloud_log.utils.constants import CLOG_CSV_PATH, NFS_CLOG_PATH, NFS_CLOG_NGINX_PORT, MESSAGE_TYPE, \
     TASK_STATUS, PROCESS, CSV_TITLE_CN, CLOG_EXPORT_MAX_SIZE, FILTER_NAME_CN, clog_filter_keys, FILE_BINARY_SIZE
-from cloud_log.utils.create_model import get_model, generate_all_clog_table_name
+from cloud_log.utils.db_utils import get_model, generate_all_clog_table_name, generate_clog_table_name_by_year_month
 from cloud_log.utils.client import IdentityClient
 from cloud_log.utils.taskinfo import update_task_info
 from cloud_log.utils.constants import CLOG_ACTIONS
@@ -115,9 +115,8 @@ def build_order_by(sorting):
 
 
 def generate_export_clog_zip_name(now_time, clog_uuid):
-    return 'clog' + '_' + '{}'.format(now_time.year) \
-           + '{}'.format(now_time.month) + '{}'.format(now_time.day) + '_' + clog_uuid
-
+    fname_prefix = generate_clog_table_name_by_year_month(now_time.year, now_time.month)
+    return fname_prefix + '_{day:02d}_{uuid}'.format(day=now_time.day, uuid=clog_uuid)
 
 def generate_clog_export_url(export_clog_zip_name):
     return export_clog_zip_name + '.zip'
@@ -287,6 +286,7 @@ def export_clog(context, param):
     }
     clog_uuid = param.get('export_clog_log_infos')[0].get('clog_uuid')
     utils.update_clog_status(clog_uuid, is_success=True, result_data=result_data)
+
     message = _('Clog was export successful')
     websocket.update_msg(notify_message, message=message,
                          exoport_url=clog_export_url,
