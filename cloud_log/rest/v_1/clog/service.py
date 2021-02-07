@@ -7,7 +7,7 @@ from dateutil.relativedelta import relativedelta
 from django.conf import settings
 
 from cloud_log.models import Clog
-from cloud_log.utils.create_model import generate_clog_table_name_by_datetime, get_model
+from cloud_log.utils.db_utils import generate_clog_table_name_by_datetime, get_model
 from portal_rest.exceptions import ValidationError
 
 from django.utils.translation import ugettext_lazy as _

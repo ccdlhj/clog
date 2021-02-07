@@ -30,7 +30,7 @@ from cloud_log.utils.common import RES_ORG_TYPE
 from cloud_log.utils.common import CLOG_STATUS_RUNNING
 from cloud_log.utils.common import get_res_org_uuid_list
 from cloud_log.utils.constants import SYS_CLOG_OPERATION_IDS, clog_filter_keys
-from cloud_log.utils.create_model import get_model, generate_clog_table_name_by_datetime, generate_all_clog_table_name
+from cloud_log.utils.db_utils import get_model, generate_clog_table_name_by_datetime, generate_all_clog_table_name
 
 clog_keys = ['uuid'] + clog_filter_keys
 
