@@ -75,6 +75,9 @@ msgstr "对象类型"
 msgid "Res Org ID"
 msgstr "项目ID"
 
+msgid "Res Org Type"
+msgstr "项目类型"
+
 #: cloud_log/rest/v_1/clog/schema.py:29
 msgid "Res Org Name"
 msgstr "项目名称"

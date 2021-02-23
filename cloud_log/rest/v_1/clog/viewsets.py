@@ -26,11 +26,10 @@ from cloud_log.rest.v_1.clog.schema import BulkClogSpawnSchema
 from cloud_log.rest.v_1.clog.schema import ClogSpawnSchema
 from cloud_log.rest.v_1.clog.schema import ClogUpdateSchema
 from cloud_log.rest.v_1.clog.schema import ClogDumSchema
-from cloud_log.utils.common import RES_ORG_TYPE
 from cloud_log.utils.common import CLOG_STATUS_RUNNING
-from cloud_log.utils.common import get_res_org_uuid_list
-from cloud_log.utils.constants import SYS_CLOG_OPERATION_IDS, clog_filter_keys
+from cloud_log.utils.constants import clog_filter_keys
 from cloud_log.utils.db_utils import get_model, generate_clog_table_name_by_datetime, generate_all_clog_table_name
+
 
 clog_keys = ['uuid'] + clog_filter_keys
 
@@ -158,15 +157,6 @@ class ClogViewset(ServiceBaseViewSet,
                     values=str(operation.get('values')), value_type=value_type)
             raise ValidationError(msg)
 
-    def build_res_org_query(self, query, res_org_uuids=None):
-        if self.request.user.res_org_info['type'] == RES_ORG_TYPE.SYS:
-            return query
-        res_org_uuids = res_org_uuids or get_res_org_uuid_list(self.request,
-                                                               current=True)
-        query &= Q(res_org_id__in=res_org_uuids)
-        query &= ~Q(operation_id__in=SYS_CLOG_OPERATION_IDS)
-        return query
-
     def build_filter_query(self, query, filters):
         # filters: [
         #               {"Names": "name__in", "Values": ["1", "2", "3"]},
@@ -218,7 +208,7 @@ class ClogViewset(ServiceBaseViewSet,
         return query
 
     def build_collect_query(self, data):
-        query = self.build_res_org_query(Q())
+        query = service.build_res_org_query_with_request(self.request, Q())
         query = self.build_filter_query(query, data.get('Filters'))
         query = self.build_date_query(query, data)
         return query
@@ -318,7 +308,7 @@ class ClogSpcViewset(ServiceBaseViewSet,
             create_time = service.get_uuid_create_time(clog_uuid)
             clog = service.get_clog(clog_uuid, create_time)
 
-            for k in clog_keys:
+            for k in clog_filter_keys:
                 if k in data:
                     setattr(clog, k, data.get(k))
             clog.save()

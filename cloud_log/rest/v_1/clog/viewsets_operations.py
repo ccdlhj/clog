@@ -3,6 +3,8 @@ from cloud_log.rest.v_1.clog import schema, template
 from cloud_log.rest.v_1.clog.viewsets import ClogViewset
 from cloud_log.utils.constants import MESSAGE_TYPE
 from cloud_log.utils.create_job import create_context
+from cloud_log.utils.common import get_res_org_uuid_list
+
 from portal_rest import router
 from portal_rest import action
 
@@ -15,6 +17,8 @@ class ClogOperationViewSet(ClogViewset):
     @action()
     def generate_export_clog_task(self, data, ids=None, query_params=None):
         res_org_id = data.get('res_org_id')
+        res_org_type = data.get('res_org_type')
+        res_org_uuids = data.get('res_org_uuids')
         start_time = data.get('startTime')
         end_time = data.get('endTime')
         filters = data.get('filters')
@@ -31,6 +35,8 @@ class ClogOperationViewSet(ClogViewset):
                                                               sorting=sorting, filters=filters,
                                                               export_clog_log_infos=export_clog_log_infos,
                                                               export_clog_log_start_time=export_clog_log_start_time,
-                                                              export_clog_log_end_time=export_clog_log_end_time)
+                                                              export_clog_log_end_time=export_clog_log_end_time,
+                                                              res_org_type=res_org_type,
+                                                              res_org_uuids=res_org_uuids)
 
         return export_clog_task

@@ -20,7 +20,7 @@ from cloud_log.models.clog import Clog
 from cloud_log.rest.v_1.clog import service
 from cloud_log.utils import websocket, taskinfo
 from cloud_log.tasks.clog import utils
-from cloud_log.utils.common import RES_ORG_TYPE
+
 from cloud_log.utils.constants import CLOG_CSV_PATH, NFS_CLOG_PATH, NFS_CLOG_NGINX_PORT, MESSAGE_TYPE, \
     TASK_STATUS, PROCESS, CSV_TITLE_CN, CLOG_EXPORT_MAX_SIZE, FILTER_NAME_CN, clog_filter_keys, FILE_BINARY_SIZE
 from cloud_log.utils.db_utils import get_model, generate_all_clog_table_name, generate_clog_table_name_by_year_month
@@ -45,14 +45,6 @@ def get_clog_zip_size(NFS_CLOG_PATH, export_clog_zip_name):
         return get_clog_zip_size_name(size, FILE_BINARY_SIZE=FILE_BINARY_SIZE.GB, BINARY_NAME='GB')
     elif FILE_BINARY_SIZE.TB <= size:
         return get_clog_zip_size_name(size, FILE_BINARY_SIZE=FILE_BINARY_SIZE.TB, BINARY_NAME='TB')
-
-
-def build_res_org_query(query, res_org_type=None, res_org_uuid=None):
-    if res_org_type == RES_ORG_TYPE.SYS:
-        return query
-    if res_org_uuid:
-        query &= Q(res_org_id=res_org_uuid)
-    return query
 
 
 def get_export_clog_filter(filters):
@@ -174,11 +166,11 @@ def genarate_csv_files(param, clog_table_names, export_clog_dir_path, export_clo
     has_clog_data_count = 0
     clog_export_start_index = 0
     clog_export_end_index = CLOG_EXPORT_MAX_SIZE
+    res_org_type = param.get('res_org_type')
+    res_org_uuids = param.get('res_org_uuids')
     for clog_table_name in clog_table_names:
         clog_model = get_model(clog_table_name, Clog)
-        res_org_info = IdentityClient().get_vdc_show(param.get('res_org_id'))
-        res_org_type = res_org_info['type']
-        query = build_res_org_query(Q(), res_org_type, param.get('res_org_id'))
+        query = service.build_res_org_query(res_org_type, Q(), res_org_uuids)
         query = build_filter_query(query, param.get('filters'))
         query = build_date_query(query, param)
         order_by = build_order_by(param.get('Sorting'))
