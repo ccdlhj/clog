@@ -78,6 +78,8 @@ class ClogDumSchema(ClogSchema):
 
 class GenerateExportClogTaskSchema(PortalSchema):
     res_org_id = fields.String(help_text=_("Res Org Id"))
+    res_org_type = fields.String(help_text=_("Res Org Type"))
+    res_org_uuids = fields.List(fields.String(), help_text=_("Res Org Ids"))
     export_clog_log_start_time = fields.String(help_text=_("Export Clog Log Start Time"))
     export_clog_log_end_time = fields.String(help_text=_("Export Clog Log End Time"))
     startTime = fields.String(help_text=_("Start Time"))

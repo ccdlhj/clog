@@ -1,18 +1,21 @@
 # -*- coding: utf-8 -*-
 import datetime
 import re
-from uuid import UUID, uuid1
+
+from uuid import UUID
 from dateutil.relativedelta import relativedelta
 
 from django.conf import settings
+from django.db.models import Q
 
 from cloud_log.models import Clog
+from cloud_log.utils.common import get_res_org_uuid_list
+from cloud_log.utils.common import RES_ORG_TYPE
+from cloud_log.utils import constants
 from cloud_log.utils.db_utils import generate_clog_table_name_by_datetime, get_model
 from portal_rest.exceptions import ValidationError
 
 from django.utils.translation import ugettext_lazy as _
-from cloud_log.utils.constants import UUID_DEFAULT_VERSION, CLOG_SAVE_UPPER_MONTH, DEFAULT_FIRST_MONTH, \
-    YEAR_DECREASE_PROGRESSIVELY, DEFAULT_LAST_MONTH, MONTH_DECREASE_PROGRESSIVELY
 
 
 def set_date_start_and_end_filter(query_params):
@@ -40,8 +43,22 @@ def build_clog_query(query_params):
     return params
 
 
+def build_res_org_query_with_request(request, query, res_org_uuids=None):
+    res_org_type = request.user.res_org_info['type']
+    res_org_uuids = res_org_uuids or get_res_org_uuid_list(request, current=True)
+    return build_res_org_query(res_org_type, query, res_org_uuids)
+
+
+def build_res_org_query(res_org_type, query, res_org_uuids):
+    if res_org_type == RES_ORG_TYPE.SYS:
+        return query
+    query &= Q(res_org_id__in=res_org_uuids)
+    query &= ~Q(operation_id__in=constants.SYS_CLOG_OPERATION_IDS)
+    return query
+
+
 def get_uuid_create_time(uuid):
-    if UUID(uuid).version != UUID_DEFAULT_VERSION:
+    if UUID(uuid).version != constants.UUID_DEFAULT_VERSION:
         return None
     clog_uuid1 = UUID('{%s}' % uuid)
     # get uuid1 create_time
@@ -103,14 +120,14 @@ def get_now_date():
 
 def validate_clog_in_all_tables(clog_uuid):
     now_date, year, month = get_now_date()
-    clog_save_upper_month = CLOG_SAVE_UPPER_MONTH
+    clog_save_upper_month = constants.CLOG_SAVE_UPPER_MONTH
     for i in range(clog_save_upper_month - 1):
         if i != 0:
-            if month == DEFAULT_FIRST_MONTH:
-                year -= YEAR_DECREASE_PROGRESSIVELY
-                month = DEFAULT_LAST_MONTH
+            if month == constants.DEFAULT_FIRST_MONTH:
+                year -= constants.YEAR_DECREASE_PROGRESSIVELY
+                month = constants.DEFAULT_LAST_MONTH
             else:
-                month -= MONTH_DECREASE_PROGRESSIVELY
+                month -= constants.MONTH_DECREASE_PROGRESSIVELY
         clog_table_name = generate_clog_table_name_by_datetime(datetime.datetime(year, month, 1))
         try:
             clog = get_model(clog_table_name, Clog).objects.get(uuid=clog_uuid)
