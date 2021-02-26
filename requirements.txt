@@ -34,3 +34,5 @@ portal-core>=1.0.0.1
 portal-rest>=1.0.0.1
 
 jsonfield>=2.0.2
+identity-client>=1.0.0.1
+
