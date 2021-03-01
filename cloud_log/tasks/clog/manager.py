@@ -228,17 +228,23 @@ def compress_zip_file(export_clog_dir_path):
 def export_clog(context, param):
     task_id = context.get('task_id')
     taskinfo.create_task_log_template(task_id, '日志数据开始导出')
-    update_task_info(task_id, status=TASK_STATUS.START, process_status=PROCESS.START)
+    update_task_info(task_id, status=TASK_STATUS.START, process_status=10)
+
+    def parse_datetime(dt):
+        return datetime.datetime.strptime(dt, "%Y-%m-%d %H:%M:%S")
 
     # generate clog model name
-    if param.get('startTime') and param.get('endTime'):
-        start_time = datetime.datetime.strptime(param.get('startTime'), "%Y-%m-%d %H:%M:%S")
-        end_time = datetime.datetime.strptime(param.get('endTime'), "%Y-%m-%d %H:%M:%S")
+    if param.get('export_clog_log_start_time') and param.get('export_clog_log_end_time'):
+        start_time = parse_datetime(param.get('export_clog_log_start_time'))
+        end_time = parse_datetime(param.get('export_clog_log_end_time'))
+    elif param.get('startTime') and param.get('endTime'):
+        start_time = parse_datetime(param.get('startTime'))
+        end_time = parse_datetime(param.get('endTime'))
     else:
         start_time = datetime.datetime.now()
         end_time = datetime.datetime.now()
-        param['startTime'] = start_time
-        param['endTime'] = end_time
+    param['startTime'] = start_time
+    param['endTime'] = end_time
     clog_table_name_sorting = service.get_clog_model_name_order_mode(param.get('Sorting'))
     clog_table_names = generate_all_clog_table_name(start_time, end_time, clog_table_name_sorting)
     clog_uuid = uuidutils.generate_uuid()

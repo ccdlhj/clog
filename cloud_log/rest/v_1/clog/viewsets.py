@@ -226,40 +226,48 @@ class ClogViewset(ServiceBaseViewSet,
             return [], 0
         # get clog table
         total_clogs = []
-        clog_total_count = 0
+        total_count = 0
         clog_table_name_sorting = service.get_clog_model_name_order_mode(sorting=data.get('Sorting'))
         clog_names = generate_all_clog_table_name(start_time, end_time, clog_table_name_sorting)
         order_by = self.build_order_by(data.get('Sorting'))
+
+        offset = offset or 0
+        remain_limit = limit
 
         # 获取日志数据
         for clog_name in clog_names:
             clog_model = get_model(clog_name, Clog)
             clogs = service.get_clogs(clog_model, query=query)
             try:
-                clog_datas_num = clogs.count()
+                current_clog_table_count = clogs.count()
             except Exception as e:
                 continue
             clogs = clogs.order_by(*order_by)
+
+            if current_clog_table_count <= offset:
+                offset = offset - current_clog_table_count or 0
+                continue
+
             if limit:
-                initial_limit = limit
-                if clog_datas_num <= offset:
-                    offset -= clog_datas_num
-                else:
-                    if clog_datas_num >= offset + limit:
-                        clog_split_count = limit
-                    else:
-                        clog_split_count = clog_datas_num - offset
-                    clog_split = clogs[offset: offset + limit]
+                if remain_limit:
+                    clog_split = clogs[offset: offset + remain_limit]
                     total_clogs.append(clog_split)
-                    clog_total_count += clog_split_count
-                    offset -= clog_split_count
-                    limit -= clog_total_count
-                if clog_total_count == initial_limit:
+
+                    if current_clog_table_count >= offset + remain_limit:
+                        total_count += remain_limit
+                        break
+                    else:
+                        clog_split_count = current_clog_table_count - offset
+                        remain_limit -= clog_split_count
+                        total_count += clog_split_count
+                        offset = 0
+                else:
                     break
             else:
-                clog_total_count += clog_datas_num
+                total_count += current_clog_table_count
                 total_clogs = chain(total_clogs, clogs)
-        return total_clogs, clog_total_count
+                continue
+        return total_clogs, total_count
 
     def perform_collect(self, data, ids=None, query_params=None):
         clogs, clog_total_count = self.clog_collect(data)
